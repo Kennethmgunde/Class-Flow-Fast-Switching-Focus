@@ -9,7 +9,7 @@
 // Each pattern is a common one for English learners in Kenya and Nigeria, and
 // applies to every sentence that child says, as a real child's would.
 
-import type { SoundId } from '../web/src/sounds.ts'
+import type { SoundId } from '../sounds.ts'
 
 export type SimulatedLearner = {
   name: string
