@@ -58,6 +58,16 @@ cd ../server && go run .     # serves web/dist and the proxy on :8080
 
 Server flags: `-addr` (default `:8080`), `-capt` (CAPT base URL), `-web` (built web app directory).
 
+Tests: `cd web && npm test`.
+
+### Microphone and HTTPS
+
+Browsers only allow the microphone on `https://` pages or `localhost`. Opening the app on a tablet at `http://<laptop-ip>:8080` blocks the mic. For the tablet demo, serve over HTTPS or use a tunnel.
+
+## Audio
+
+The mic is captured at the browser's native rate (usually 44.1 or 48 kHz) and resampled to 16 kHz mono 16-bit WAV with `OfflineAudioContext` (`web/src/audio/`). Opening an `AudioContext` at 16 kHz directly fails in Firefox when a mic stream is connected to it.
+
 ## CAPT notes
 
 - REST `POST /capt/api/capt/v1/evaluate` for prompts under about 8 seconds. Longer prompts return a 503, so use WebSocket `/capt/api/capt/v1/streaming-evaluate` for those.
