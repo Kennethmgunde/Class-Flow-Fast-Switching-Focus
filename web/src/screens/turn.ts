@@ -8,8 +8,11 @@
 
 import { Recorder } from '../audio/recorder.ts'
 import { avatarElement } from '../avatars.ts'
-import { CaptError, evaluate, type Evaluation } from '../capt.ts'
+import { measureWav } from '../audio/wav.ts'
+import { evaluate, type Evaluation } from '../capt.ts'
+import { logError } from '../error-log.ts'
 import { cheer, choosePrompts, starsFor, wordFeedback } from '../practice.ts'
+import { SKIP_AFTER, describeError, recordingProblem, unclearResult, withRetry, type Problem } from '../problems.ts'
 import { PROMPTS, type Prompt } from '../prompts.ts'
 import type { Learner, Session, Store } from '../store.ts'
 import { h } from '../ui/dom.ts'
@@ -38,13 +41,14 @@ type State =
   | { step: 'recording' }
   | { step: 'scoring' }
   | { step: 'feedback'; evaluation: Evaluation }
-  | { step: 'error'; message: string }
+  | { step: 'error'; problem: Problem }
   | { step: 'finished' }
 
 class Turn {
   private index = 0
   private state: State = { step: 'ready' }
   private saved = 0
+  private problemsHere = 0 // problems on the current sentence, to offer a skip
   private bestStars: number[] = [] // best result per prompt, for the summary
   private stopTimer?: ReturnType<typeof setTimeout>
   private readonly root: HTMLElement
@@ -126,11 +130,16 @@ class Turn {
           ),
         )
       }
-      case 'error':
-        return h('div', { class: 'controls' },
-          h('p', { class: 'cheer' }, s.message),
-          h('button', { class: 'primary', on: { click: () => this.set({ step: 'ready' }) } }, 'Try again'),
+      case 'error': {
+        const canSkip = this.problemsHere >= SKIP_AFTER
+        return h('div', { class: `controls problem ${s.problem.askTeacher ? 'ask-teacher' : ''}`, role: 'alert' },
+          h('p', { class: 'cheer' }, s.problem.message),
+          h('div', { class: 'row center' },
+            h('button', { class: 'primary', on: { click: () => this.set({ step: 'ready' }) } }, 'Try again'),
+            canSkip && h('button', { class: 'secondary', on: { click: () => this.next() } }, 'Skip this one'),
+          ),
         )
+      }
       case 'finished':
         return h('div')
     }
@@ -150,9 +159,9 @@ class Turn {
     try {
       await this.deps.recorder.start()
     } catch (err) {
-      console.error('microphone unavailable', err)
-      this.set({ step: 'error', message: 'The microphone isn’t working. Ask your teacher for help.' })
-      return
+      const problem = describeError(err, navigator.onLine)
+      logError('microphone', problem.kind, err)
+      return this.fail(problem)
     }
     this.set({ step: 'recording' })
     this.stopTimer = setTimeout(() => void this.stopRecording(), MAX_RECORD_MS)
@@ -165,7 +174,15 @@ class Turn {
     const prompt = this.prompts[this.index]
     try {
       const wav = await this.deps.recorder.stop()
-      const evaluation = await this.deps.evaluate(wav, prompt.text)
+      // Silent or too-short takes never reach CAPT.
+      const tooQuiet = recordingProblem(measureWav(wav))
+      if (tooQuiet) return this.fail(tooQuiet)
+
+      // One quiet retry if CAPT is busy or the network blips.
+      const evaluation = await withRetry(() => this.deps.evaluate(wav, prompt.text))
+      const unclear = unclearResult(evaluation)
+      if (unclear) return this.fail(unclear) // not saved: noise, not practice
+
       await this.store.addAttempt({
         learnerId: this.learner.id,
         sessionId: this.session.id,
@@ -177,15 +194,22 @@ class Turn {
       this.bestStars[this.index] = Math.max(this.bestStars[this.index] ?? 0, starsFor(evaluation))
       this.set({ step: 'feedback', evaluation })
     } catch (err) {
-      // Friendly words for the child; the real error goes to the console.
-      console.error('scoring failed', err)
-      this.set({ step: 'error', message: friendlyError(err) })
+      // Friendly words for the child; the real error goes to the log.
+      const problem = describeError(err, navigator.onLine)
+      logError('scoring', problem.kind, err)
+      this.fail(problem)
     }
+  }
+
+  private fail(problem: Problem): void {
+    this.problemsHere++
+    this.set({ step: 'error', problem })
   }
 
   private next(): void {
     if (this.index === this.prompts.length - 1) return this.set({ step: 'finished' })
     this.index++
+    this.problemsHere = 0
     this.set({ step: 'ready' })
   }
 
@@ -193,11 +217,6 @@ class Turn {
     this.state = state
     this.render()
   }
-}
-
-function friendlyError(err: unknown): string {
-  if (err instanceof CaptError && err.kind === 'unavailable') return 'The listening helper is resting. Ask your teacher.'
-  return 'Oops, let’s try that again.'
 }
 
 function micIcon(): SVGElement {
