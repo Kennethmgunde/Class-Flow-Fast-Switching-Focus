@@ -90,8 +90,10 @@ export class Store {
     return l
   }
 
+  // Alphabetical, so the teacher can scan the roster quickly.
   async listLearners(classId: string): Promise<Learner[]> {
-    return byTime(await this.allWhere<Learner>('learners', 'classId', classId), (l) => l.createdAt)
+    const learners = await this.allWhere<Learner>('learners', 'classId', classId)
+    return learners.sort((a, b) => a.name.localeCompare(b.name))
   }
 
   // Deletes the learner and all their attempts.
