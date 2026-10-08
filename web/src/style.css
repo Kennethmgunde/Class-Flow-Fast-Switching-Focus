@@ -358,3 +358,17 @@ label { display: block; font-weight: 600; margin-bottom: 0.35rem; }
 }
 .error-log { padding-left: 1.1rem; font-size: 0.9rem; overflow-wrap: anywhere; }
 .error-log li { margin-bottom: 0.5rem; }
+
+.listen {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1.2rem 0 0.9rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+  touch-action: manipulation;
+}
+.listen svg { width: 1.6rem; height: 1.6rem; fill: currentColor; }
+.listen.playing { background: var(--accent); color: var(--accent-ink); }

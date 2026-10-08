@@ -22,6 +22,22 @@ export type SynthOptions = {
 
 // Returns CAPT-ready 16 kHz mono 16-bit WAV.
 export async function synthesizeForCapt(text: string, opts: SynthOptions = {}): Promise<Uint8Array> {
+  const { sampleRate, samples } = await synthesize(text, opts)
+  return encodeWav(resample(samples, sampleRate, CAPT_SAMPLE_RATE), CAPT_SAMPLE_RATE)
+}
+
+// Returns 16-bit WAV at VoiceGen's own rate (22.05 kHz), for playback,
+// scaled so every clip peaks at the same level: loud enough for a tablet
+// speaker in a classroom, and no clip quieter than the next.
+export async function synthesizeForPlayback(text: string, opts: SynthOptions = {}, peak = 0.9): Promise<Uint8Array> {
+  const { sampleRate, samples } = await synthesize(text, opts)
+  let max = 0
+  for (const s of samples) max = Math.max(max, Math.abs(s))
+  const gain = max > 0 ? peak / max : 1
+  return encodeWav(samples.map((s) => s * gain), sampleRate)
+}
+
+async function synthesize(text: string, opts: SynthOptions): Promise<{ sampleRate: number; samples: Float32Array }> {
   const params = new URLSearchParams({
     'text.text': text,
     'config.model_id': 'en_US',
@@ -32,8 +48,7 @@ export async function synthesizeForCapt(text: string, opts: SynthOptions = {}): 
   })
   const res = await fetch(`${VOICEGEN}/streaming-synthesize?${params}`)
   if (!res.ok) throw new Error(`VoiceGen HTTP ${res.status}: ${await res.text()}`)
-  const { sampleRate, samples } = readFloatWav(new Uint8Array(await res.arrayBuffer()))
-  return encodeWav(resample(samples, sampleRate, CAPT_SAMPLE_RATE), CAPT_SAMPLE_RATE)
+  return readFloatWav(new Uint8Array(await res.arrayBuffer()))
 }
 
 // Reads a mono 32-bit float WAV, VoiceGen's output format.

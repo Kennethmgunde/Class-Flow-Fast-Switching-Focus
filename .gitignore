@@ -14,6 +14,8 @@ bin/
 *.wav
 *.mp3
 *.m4a
+# ...except the prompt clips, which ship with the app (tools/make-prompt-audio.ts)
+!web/public/prompts/*.wav
 data/generated/
 
 # Editor and OS
