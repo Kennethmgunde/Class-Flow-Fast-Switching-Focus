@@ -1,15 +1,25 @@
 import './style.css'
 import { Store } from './store.ts'
 import { renderSetup } from './screens/setup.ts'
+import { renderRoster } from './screens/roster.ts'
+import { renderTurn } from './screens/turn.ts'
 import { renderCheck } from './screens/check.ts'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 const store = await Store.open()
 
-// Hash routes: #/setup (teacher setup, the default) and #/check (recording check).
+// Hash routes:
+//   #/setup       teacher setup (the default)
+//   #/class       child-facing roster
+//   #/turn/<id>   one child's turn
+//   #/check       recording check
 async function route(): Promise<void> {
   const path = location.hash.replace(/^#/, '') || '/setup'
-  if (path === '/check') renderCheck(app)
+  const turn = path.match(/^\/turn\/([0-9a-f]+)$/)
+  window.scrollTo(0, 0)
+  if (turn) await renderTurn(app, store, turn[1])
+  else if (path === '/class') await renderRoster(app, store)
+  else if (path === '/check') renderCheck(app)
   else await renderSetup(app, store)
 }
 
