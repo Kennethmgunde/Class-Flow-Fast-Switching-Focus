@@ -82,6 +82,12 @@ export class Store {
     })
   }
 
+  // Deletes every class, learner, session and attempt on this tablet.
+  async wipeEverything(): Promise<void> {
+    const stores = ['classes', 'learners', 'sessions', 'attempts']
+    await this.write(stores, (tx) => stores.forEach((s) => tx.objectStore(s).clear()))
+  }
+
   // Learners
 
   async addLearner(classId: string, name: string, avatar: string, now = Date.now()): Promise<Learner> {

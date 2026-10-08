@@ -93,7 +93,12 @@ The mic is captured at the browser's native rate (usually 44.1 or 48 kHz) and re
 - No human recordings: test audio is synthesized (quest rule).
 - Learners are stored by first name or avatar only, on the device.
 - Storage is IndexedDB in the browser (`web/src/store.ts`): classes, learners, sessions and attempts, with each attempt holding CAPT's per-word and per-sound scores. Nothing is sent to a server except the audio CAPT scores.
-- Deleting a learner or a class also deletes their attempts.
+- Deleting a learner or a class also deletes their attempts. **Wipe everything on this tablet** (in setup) clears all classes, scores and the PIN.
+- Recordings are never stored: each is sent to CAPT with the sentence only (no name or id), scored, and discarded. Tests check both.
+
+## Teacher PIN
+
+In setup, the teacher can set a 4-digit PIN. With a PIN set, setup, the teacher view and `#/check` ask for it; children's screens never do. Going to the class view locks the teacher's screens again, and so do 30 minutes. After 5 wrong tries the keypad pauses for 30 seconds. **Forgot PIN?** Hold it for 5 seconds to remove the PIN; no data is lost. It keeps children out; it isn't a security boundary.
 
 ## Project tracking
 
