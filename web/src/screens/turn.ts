@@ -10,14 +10,15 @@ import { Recorder } from '../audio/recorder.ts'
 import { avatarElement } from '../avatars.ts'
 import { measureWav } from '../audio/wav.ts'
 import { evaluate, type Evaluation } from '../capt.ts'
-import { logError } from '../error-log.ts'
+import { logError, logNote } from '../error-log.ts'
 import { cheer, choosePrompts, starsFor, wordFeedback } from '../practice.ts'
-import { SKIP_AFTER, describeError, recordingProblem, unclearResult, withRetry, type Problem } from '../problems.ts'
+import { SKIP_AFTER, describeError, recordingProblem, unclearResult, withRetry, withTimeout, type Problem } from '../problems.ts'
 import { PROMPTS, type Prompt } from '../prompts.ts'
 import type { Learner, Session, Store } from '../store.ts'
 import { h } from '../ui/dom.ts'
 
 const MAX_RECORD_MS = 8000 // CAPT REST handles prompts up to about 8 s
+const MIC_LIMIT_MS = 8000 // longest a microphone start or stop may take
 
 // What the screen needs to record and score. Swappable for previews.
 export type TurnDeps = {
@@ -38,6 +39,7 @@ export async function renderTurn(root: HTMLElement, store: Store, learnerId: str
 
 type State =
   | { step: 'ready' }
+  | { step: 'starting' }
   | { step: 'recording' }
   | { step: 'scoring' }
   | { step: 'feedback'; evaluation: Evaluation }
@@ -109,6 +111,11 @@ class Turn {
           h('button', { class: 'mic', 'aria-label': 'Start recording', on: { click: () => this.startRecording() } }, micIcon()),
           h('p', { class: 'hint' }, 'Tap the microphone, then say the sentence.'),
         )
+      case 'starting':
+        return h('div', { class: 'controls' },
+          h('button', { class: 'mic', disabled: true, 'aria-label': 'Getting ready' }, micIcon()),
+          h('p', { class: 'hint' }, 'Getting the microphone ready…'),
+        )
       case 'recording':
         return h('div', { class: 'controls' },
           h('button', { class: 'mic recording', 'aria-label': 'Stop recording', on: { click: () => this.stopRecording() } }, stopIcon()),
@@ -156,8 +163,10 @@ class Turn {
   }
 
   private async startRecording(): Promise<void> {
+    if (this.state.step !== 'ready') return
+    this.set({ step: 'starting' })
     try {
-      await this.deps.recorder.start()
+      await withTimeout(this.deps.recorder.start(), MIC_LIMIT_MS, 'starting the microphone')
     } catch (err) {
       const problem = describeError(err, navigator.onLine)
       logError('microphone', problem.kind, err)
@@ -173,15 +182,22 @@ class Turn {
     this.set({ step: 'scoring' })
     const prompt = this.prompts[this.index]
     try {
-      const wav = await this.deps.recorder.stop()
+      const wav = await withTimeout(this.deps.recorder.stop(), MIC_LIMIT_MS, 'stopping the microphone')
       // Silent or too-short takes never reach CAPT.
-      const tooQuiet = recordingProblem(measureWav(wav))
-      if (tooQuiet) return this.fail(tooQuiet)
+      const sound = measureWav(wav)
+      const tooQuiet = recordingProblem(sound)
+      if (tooQuiet) {
+        logNote('recording', tooQuiet.kind, `${sound.durationSec.toFixed(2)} s, peak ${sound.peak.toFixed(3)}, rms ${sound.rms.toFixed(4)}`)
+        return this.fail(tooQuiet)
+      }
 
       // One quiet retry if CAPT is busy or the network blips.
       const evaluation = await withRetry(() => this.deps.evaluate(wav, prompt.text))
       const unclear = unclearResult(evaluation)
-      if (unclear) return this.fail(unclear) // not saved: noise, not practice
+      if (unclear) {
+        logNote('scoring', unclear.kind, `score ${evaluation.score.toFixed(3)} for "${prompt.text}"`)
+        return this.fail(unclear) // not saved: noise, not practice
+      }
 
       await this.store.addAttempt({
         learnerId: this.learner.id,

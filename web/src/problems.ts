@@ -9,7 +9,7 @@ import type { Loudness } from './audio/wav.ts'
 export type Problem = {
   kind:
     | 'too-short' | 'silent' | 'unclear'
-    | 'mic-blocked' | 'no-mic' | 'insecure-page'
+    | 'mic-blocked' | 'no-mic' | 'insecure-page' | 'mic-stuck'
     | 'offline' | 'capt-down' | 'unknown'
   message: string // for the child
   askTeacher: boolean // a grown-up needs to fix it
@@ -51,6 +51,9 @@ export function describeError(err: unknown, online = true): Problem {
     // Browsers hide the microphone on plain http pages other than localhost.
     return { kind: 'insecure-page', message: 'The microphone isn’t allowed here. Ask your teacher for help.', askTeacher: true }
   }
+  if (err instanceof TimeoutError && /microphone/.test(err.message)) {
+    return { kind: 'mic-stuck', message: 'The microphone didn’t start. Ask your teacher for help.', askTeacher: true }
+  }
   if (!online) {
     return { kind: 'offline', message: 'We’re not connected to the internet. Ask your teacher.', askTeacher: true }
   }
@@ -58,6 +61,20 @@ export function describeError(err: unknown, online = true): Problem {
     return { kind: 'capt-down', message: 'The listening helper is resting. Ask your teacher.', askTeacher: true }
   }
   return { kind: 'unknown', message: 'Oops, let’s try that again.', askTeacher: false }
+}
+
+export class TimeoutError extends Error {
+  constructor(what: string) {
+    super(`${what} took too long`)
+    this.name = 'TimeoutError'
+  }
+}
+
+// Rejects if `promise` hasn't settled within `ms`, so the screen never freezes.
+export function withTimeout<T>(promise: Promise<T>, ms: number, what: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout>
+  const limit = new Promise<never>((_, reject) => { timer = setTimeout(() => reject(new TimeoutError(what)), ms) })
+  return Promise.race([promise, limit]).finally(() => clearTimeout(timer))
 }
 
 // Errors worth one quiet retry before bothering the child: a busy or

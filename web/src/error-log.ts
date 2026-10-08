@@ -1,5 +1,6 @@
-// The last few real errors, kept on this device for the teacher or a
-// developer (shown on #/check). Children only ever see friendly messages.
+// The last few problems, kept on this device for the teacher or a developer
+// (shown on #/check): real errors, and notes such as a silent recording with
+// its loudness. Children only ever see friendly messages.
 
 const KEY = 'class-flow:error-log'
 const MAX = 50
@@ -15,6 +16,18 @@ export function logError(where: string, kind: string, err: unknown): void {
     localStorage.setItem(KEY, JSON.stringify(log.slice(-MAX)))
   } catch {
     // Storage unavailable: the console still has it.
+  }
+}
+
+// An expected problem (silence, too short): no console error, but logged
+// with its numbers so thresholds can be checked on a real tablet.
+export function logNote(where: string, kind: string, detail: string): void {
+  try {
+    const log = readErrors()
+    log.push({ at: Date.now(), where, kind, detail })
+    localStorage.setItem(KEY, JSON.stringify(log.slice(-MAX)))
+  } catch {
+    // Storage unavailable.
   }
 }
 

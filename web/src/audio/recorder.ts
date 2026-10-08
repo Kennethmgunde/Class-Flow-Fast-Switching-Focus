@@ -27,6 +27,9 @@ export class Recorder {
       audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true },
     })
     this.ctx = new AudioContext()
+    // Chrome can create the context paused if the permission prompt outlasted
+    // the tap that started recording; a paused context records nothing.
+    await this.ctx.resume()
     const url = URL.createObjectURL(new Blob([WORKLET_SOURCE], { type: 'text/javascript' }))
     await this.ctx.audioWorklet.addModule(url)
     URL.revokeObjectURL(url)

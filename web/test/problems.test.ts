@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { encodeWav, measureWav } from '../src/audio/wav.ts'
 import { CaptError, type Evaluation } from '../src/capt.ts'
-import { describeError, isTransient, recordingProblem, unclearResult, withRetry } from '../src/problems.ts'
+import { TimeoutError, describeError, isTransient, recordingProblem, unclearResult, withRetry, withTimeout } from '../src/problems.ts'
 
 const tone = (seconds: number, amplitude: number) =>
   encodeWav(Float32Array.from({ length: Math.round(16000 * seconds) }, (_, i) => amplitude * Math.sin(i / 8)), 16000)
@@ -68,4 +68,13 @@ test('withRetry gives up after one retry, and never retries a down server', asyn
   calls = 0
   await assert.rejects(withRetry(async () => { calls++; throw new CaptError('unavailable', 'down') }, { wait: async () => {} }))
   assert.equal(calls, 1)
+})
+
+test('a microphone that never starts becomes a teacher message, not a frozen screen', async () => {
+  const never = new Promise<void>(() => {})
+  await assert.rejects(withTimeout(never, 20, 'starting the microphone'), TimeoutError)
+  const problem = describeError(new TimeoutError('starting the microphone'))
+  assert.equal(problem.kind, 'mic-stuck')
+  assert.ok(problem.askTeacher)
+  assert.equal(await withTimeout(Promise.resolve('ok'), 20, 'x'), 'ok')
 })

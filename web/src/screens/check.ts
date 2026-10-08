@@ -77,11 +77,11 @@ export function renderCheck(app: HTMLElement): void {
   app.querySelector('main')!.append(errorLog())
 }
 
-// Recent errors on this tablet: what children saw as friendly messages.
+// Recent problems on this tablet: errors and notes behind the friendly messages children saw.
 function errorLog(): HTMLElement {
   const errors = readErrors().reverse()
   const section = h('section', { class: 'card' },
-    h('h2', {}, 'Recent errors on this tablet'),
+    h('h2', {}, 'Recent problems on this tablet'),
     errors.length === 0
       ? h('p', { class: 'muted' }, 'None.')
       : h('ul', { class: 'error-log' },
