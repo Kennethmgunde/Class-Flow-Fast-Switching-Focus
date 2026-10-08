@@ -11,13 +11,13 @@ const evaluation: Evaluation = JSON.parse(readFileSync(new URL('fixtures/cat-res
 // Each test gets its own empty database.
 const fresh = () => Store.open('test', new IDBFactory())
 
-test('learners are listed per class, in the order they were added', async () => {
+test('learners are listed per class, alphabetically', async () => {
   const store = await fresh()
   const a = await store.addClass('Class 3A', 1)
   const b = await store.addClass('Class 3B', 2)
-  await store.addLearner(a.id, '  Amara ', '🦁', 10)
-  await store.addLearner(b.id, 'Chidi', '🐘', 11)
-  await store.addLearner(a.id, 'Wanjiru', '🦒', 12)
+  await store.addLearner(a.id, 'Wanjiru', 'kid-03', 10)
+  await store.addLearner(b.id, 'Chidi', 'kid-02', 11)
+  await store.addLearner(a.id, '  Amara ', 'kid-01', 12)
 
   assert.deepEqual((await store.listLearners(a.id)).map((l) => l.name), ['Amara', 'Wanjiru'])
   assert.deepEqual((await store.listLearners(b.id)).map((l) => l.name), ['Chidi'])
@@ -28,8 +28,8 @@ test('learners are listed per class, in the order they were added', async () => 
 test("each child's attempts are kept separate and in time order", async () => {
   const store = await fresh()
   const c = await store.addClass('Class 3A')
-  const amara = await store.addLearner(c.id, 'Amara', '🦁')
-  const chidi = await store.addLearner(c.id, 'Chidi', '🐘')
+  const amara = await store.addLearner(c.id, 'Amara', 'kid-01')
+  const chidi = await store.addLearner(c.id, 'Chidi', 'kid-02')
   const s = await store.startSession(c.id)
 
   await store.addAttempt({ learnerId: amara.id, sessionId: s.id, referenceText: 'the cat sat on the mat', evaluation, at: 300 })
@@ -63,8 +63,8 @@ test('starting a session ends the one still open', async () => {
 test('deleting a learner deletes only their attempts', async () => {
   const store = await fresh()
   const c = await store.addClass('Class 3A')
-  const amara = await store.addLearner(c.id, 'Amara', '🦁')
-  const chidi = await store.addLearner(c.id, 'Chidi', '🐘')
+  const amara = await store.addLearner(c.id, 'Amara', 'kid-01')
+  const chidi = await store.addLearner(c.id, 'Chidi', 'kid-02')
   const s = await store.startSession(c.id)
   await store.addAttempt({ learnerId: amara.id, sessionId: s.id, referenceText: 'x', evaluation })
   await store.addAttempt({ learnerId: chidi.id, sessionId: s.id, referenceText: 'x', evaluation })
@@ -81,7 +81,7 @@ test('deleting a class wipes its learners, sessions and attempts, and nothing el
   const a = await store.addClass('Class 3A')
   const b = await store.addClass('Class 3B')
   for (const c of [a, b]) {
-    const l = await store.addLearner(c.id, 'Amara', '🦁')
+    const l = await store.addLearner(c.id, 'Amara', 'kid-01')
     const s = await store.startSession(c.id)
     await store.addAttempt({ learnerId: l.id, sessionId: s.id, referenceText: 'x', evaluation })
   }
@@ -108,7 +108,7 @@ test('data survives closing and reopening the database', async () => {
   const factory = new IDBFactory()
   const first = await Store.open('persist', factory)
   const c = await first.addClass('Class 3A')
-  await first.addLearner(c.id, 'Amara', '🦁')
+  await first.addLearner(c.id, 'Amara', 'kid-01')
   first.close()
 
   const second = await Store.open('persist', factory)

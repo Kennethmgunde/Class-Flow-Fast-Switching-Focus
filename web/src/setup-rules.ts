@@ -1,13 +1,8 @@
 // Rules for class setup, kept free of DOM code so they can be tested.
 
-// Animal avatars. Every learner in a class gets a different one, so a child
-// who can't read their name can still find themselves on the roster.
-export const AVATARS = [
-  '🦁', '🐘', '🦒', '🦓', '🐒', '🦛', '🐊', '🦜', '🐢', '🐬',
-  '🦋', '🐝', '🐞', '🐙', '🦀', '🐠', '🦉', '🦆', '🐧', '🦩',
-  '🐸', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🐮', '🐷', '🐔',
-  '🐳', '🦔', '🐌', '🦕', '🦄', '🐫',
-] as const
+import { AVATARS } from './avatars.ts'
+
+export { AVATARS }
 
 export const MAX_LEARNERS = AVATARS.length
 export const MAX_NAME_LENGTH = 20
@@ -29,7 +24,7 @@ export function checkLearner(
   if (n.length > MAX_NAME_LENGTH) return `Keep names under ${MAX_NAME_LENGTH} letters.`
   if (/\s/.test(n)) return 'First name only, please. No surnames, to keep children’s data private.'
   if (existing.length >= MAX_LEARNERS) return `A class can have up to ${MAX_LEARNERS} learners.`
-  if (existing.some((l) => l.avatar === avatar)) return 'Another child already has that animal. Pick a different one.'
+  if (existing.some((l) => l.avatar === avatar)) return 'Another child already has that picture. Pick a different one.'
   if (existing.some((l) => l.name.toLowerCase() === n.toLowerCase())) {
     return `This class already has someone called ${n}. Add an initial to tell them apart, like “${n}B”.`
   }

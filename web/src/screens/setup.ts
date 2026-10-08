@@ -2,6 +2,7 @@
 
 import type { ClassRoom, Learner, Session, Store } from '../store.ts'
 import { AVATARS, MAX_LEARNERS, checkClassName, checkLearner, nextAvatar } from '../setup-rules.ts'
+import { avatarElement } from '../avatars.ts'
 import { h } from '../ui/dom.ts'
 
 const SELECTED_CLASS_KEY = 'class-flow:selected-class'
@@ -134,7 +135,7 @@ class SetupScreen {
     return h('section', { class: 'card' },
       h('h2', {}, 'Learners ', h('span', { class: 'muted' }, `${this.learners.length} of ${MAX_LEARNERS}`)),
       this.learners.length === 0
-        ? h('p', { class: 'muted' }, 'No learners yet. Add each child’s first name and give them an animal.')
+        ? h('p', { class: 'muted' }, 'No learners yet. Add each child’s first name and give them a picture.')
         : h('ul', { class: 'learner-grid' }, this.learners.map((l) => this.learnerTile(l))),
       this.learners.length < MAX_LEARNERS ? this.learnerForm() : h('p', { class: 'muted' }, 'This class is full.'),
     )
@@ -151,7 +152,7 @@ class SetupScreen {
       )
     }
     return h('li', { class: 'tile' },
-      h('span', { class: 'avatar', 'aria-hidden': 'true' }, l.avatar),
+      avatarElement(l.avatar),
       h('span', { class: 'name' }, l.name),
       h('button', {
         class: 'remove',
@@ -182,17 +183,19 @@ class SetupScreen {
     },
       h('h3', {}, 'Add a learner'),
       h('div', { class: 'row' },
-        h('span', { class: 'avatar big', 'aria-label': 'Chosen animal' }, this.avatar ?? ''),
+        this.avatar ? avatarElement(this.avatar, 'avatar big') : null,
         input,
         h('button', { type: 'submit', class: 'primary' }, 'Add'),
       ),
       error,
-      h('div', { class: 'avatar-picker', role: 'radiogroup', 'aria-label': 'Animal' },
-        AVATARS.map((a) => h('button', {
+      h('p', { class: 'muted' }, 'Pick a picture the child will recognise as theirs.'),
+      h('div', { class: 'avatar-picker', role: 'radiogroup', 'aria-label': 'Picture' },
+        AVATARS.map((a, i) => h('button', {
           type: 'button',
           class: `avatar-choice ${a === this.avatar ? 'selected' : ''}`,
           role: 'radio',
           'aria-checked': String(a === this.avatar),
+          'aria-label': `Picture ${i + 1}`,
           disabled: taken.has(a),
           on: {
             click: () => {
@@ -204,7 +207,7 @@ class SetupScreen {
               again.focus()
             },
           },
-        }, a)),
+        }, avatarElement(a))),
       ),
     )
   }
