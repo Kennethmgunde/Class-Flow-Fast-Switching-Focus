@@ -47,8 +47,11 @@ const MIN_LEARNER_OCCURRENCES = 2
 // A sound is "hard" for the class when its average sits 10% below the
 // class's average over all target sounds.
 const HARD_GAP = 0.1
-// A child finds a sound hard when it scores 20% below their own average.
+// A child finds a sound hard when they score 20% below the class's average
+// for that sound: clearly worse than classmates, not just a hard sound.
 const LEARNER_GAP = 0.2
+// A sound a few children share is worth a small-group lesson.
+const MIN_GROUP = 2
 const WEAK = 0.5
 
 export type SoundDifficulty = {
@@ -57,7 +60,7 @@ export type SoundDifficulty = {
   average: number // mean CAPT score for this sound, 0 to 1
   gap: number // share below the class's average over all target sounds (0.25 = 25% below)
   weakShare: number // share of occurrences scoring under 0.5 or missed
-  hard: boolean
+  hard: boolean // hard for the whole class
   learners: Learner[] // children who find this sound hard, weakest first
 }
 
@@ -84,11 +87,6 @@ export function classSoundDifficulties(attempts: Attempt[], learners: Learner[])
   const occurrences = soundOccurrences(attempts)
   if (occurrences.length === 0) return []
   const classAverage = mean(occurrences.map((o) => o.score))
-  const learnerAverage = new Map<string, number>()
-  for (const l of learners) {
-    const mine = occurrences.filter((o) => o.learnerId === l.id).map((o) => o.score)
-    if (mine.length) learnerAverage.set(l.id, mean(mine))
-  }
 
   const result: SoundDifficulty[] = []
   for (const sound of SOUNDS) {
@@ -101,7 +99,7 @@ export function classSoundDifficulties(attempts: Attempt[], learners: Learner[])
     for (const l of learners) {
       const mine = these.filter((o) => o.learnerId === l.id).map((o) => o.score)
       if (mine.length < MIN_LEARNER_OCCURRENCES) continue
-      const gap = relativeGap(learnerAverage.get(l.id)!, mean(mine))
+      const gap = relativeGap(average, mean(mine))
       if (gap >= LEARNER_GAP) strugglers.push({ learner: l, gap })
     }
     strugglers.sort((a, b) => b.gap - a.gap)
@@ -118,6 +116,16 @@ export function classSoundDifficulties(attempts: Attempt[], learners: Learner[])
     })
   }
   return result.sort((a, b) => b.gap - a.gap)
+}
+
+// The sounds worth the teacher's attention: hard for the whole class
+// (hardest first), then sounds a small group finds hard (biggest group first).
+export function soundsToWorkOn(difficulties: SoundDifficulty[], limit = 3): SoundDifficulty[] {
+  const whole = difficulties.filter((d) => d.hard).sort((a, b) => b.gap - a.gap)
+  const group = difficulties
+    .filter((d) => !d.hard && d.learners.length >= MIN_GROUP)
+    .sort((a, b) => b.learners.length - a.learners.length || b.gap - a.gap)
+  return [...whole, ...group].slice(0, limit)
 }
 
 // --- Improvement (TRA-805) ----------------------------------------------------
