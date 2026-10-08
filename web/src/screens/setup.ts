@@ -52,6 +52,7 @@ class SetupScreen {
         this.classes.length > 0 && this.classPicker(),
         this.classes.length > 0 && !this.creatingClass &&
           h('button', { class: 'ghost', on: { click: () => { this.creatingClass = true; this.render() } } }, '+ New class'),
+        this.learners.length > 0 && !this.creatingClass && h('a', { class: 'button primary', href: '#/teacher' }, 'Teacher view'),
       ),
       h('main', { class: 'setup' },
         showClassForm ? this.classForm() : null,

@@ -30,7 +30,7 @@ export async function renderRoster(root: HTMLElement, store: Store): Promise<voi
     h('header', { class: 'topbar roster-bar' },
       h('h1', {}, 'Who’s next?'),
       h('span', { class: 'muted' }, `${current.name} · ${done} of ${tiles.length} had a turn`),
-      h('a', { class: 'button ghost small', href: '#/setup' }, 'Teacher'),
+      h('a', { class: 'button ghost small', href: '#/teacher' }, 'Teacher'),
     ),
     h('main', { class: 'roster' },
       h('ul', { class: 'roster-grid' },

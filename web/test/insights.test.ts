@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import type { Evaluation } from '../src/capt.ts'
 import type { Attempt, Learner } from '../src/store.ts'
-import { attemptAccuracy, classImprovement, classSoundDifficulties, improvement, turnsThisSession } from '../src/insights.ts'
+import { attemptAccuracy, classImprovement, classSoundDifficulties, improvement, soundsToWorkOn, turnsThisSession } from '../src/insights.ts'
 
 const learner = (name: string): Learner => ({ id: name.toLowerCase(), classId: 'c', name, avatar: 'kid-01', createdAt: 0 })
 const [amara, chidi, kofi, wanjiru, zuri] = ['Amara', 'Chidi', 'Kofi', 'Wanjiru', 'Zuri'].map(learner)
@@ -89,6 +89,37 @@ test('pause words and missed sounds are handled', () => {
   a.evaluation.words.push({ text: '', startMs: 0, durationMs: 0, sounds: [{ reference: 'T', score: 0, kind: 'match', heard: [] }] })
   a.evaluation.words[0].sounds.push({ reference: 'S', score: 0.9, kind: 'deletion', heard: [] })
   assert.equal(attemptAccuracy(a.evaluation), 0.45) // T 0.9 and a missed S, not the pause
+})
+
+// A class of 30, where every child says th, r and v four times. Three
+// children struggle with th; r is a little weaker for everyone. Lessons from
+// a realistic preview: a small group's sound must still be listed, and a
+// class-wide weak sound mustn't name children by chance.
+function bigClass(): { learners: Learner[]; attempts: Attempt[] } {
+  let s = 11
+  const noise = () => ((s = (s * 16807) % 2147483647) / 2147483647 - 0.5) * 0.16
+  const learners = Array.from({ length: 30 }, (_, i) => learner(`Child${String(i).padStart(2, '0')}`))
+  const attempts = learners.flatMap((who, i) =>
+    Array.from({ length: 4 }, () => attempt(who, 's', { T: (i < 3 ? 0.4 : 0.85) + noise(), 'r\\': 0.68 + noise(), v: 0.85 + noise() })),
+  )
+  return { learners, attempts }
+}
+
+test("a small group's hard sound is listed, naming exactly that group", () => {
+  const { learners, attempts } = bigClass()
+  const focus = soundsToWorkOn(classSoundDifficulties(attempts, learners))
+  const th = focus.find((d) => d.sound.id === 'th-think')
+  assert.ok(th, 'th should be listed')
+  assert.equal(th.hard, false) // only 3 of 30, so not a whole-class sound
+  assert.deepEqual(th.learners.map((l) => l.name).sort(), ['Child00', 'Child01', 'Child02'])
+})
+
+test('a whole-class weak sound is listed first and names nobody by chance', () => {
+  const { learners, attempts } = bigClass()
+  const focus = soundsToWorkOn(classSoundDifficulties(attempts, learners))
+  assert.equal(focus[0].sound.id, 'r')
+  assert.equal(focus[0].hard, true)
+  assert.deepEqual(focus[0].learners, [])
 })
 
 // --- Improvement ---
