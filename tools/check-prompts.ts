@@ -10,7 +10,8 @@
 //   node tools/check-prompts.ts    # from the repo root
 //
 // Writes the phones CAPT used for each prompt to
-// web/test/fixtures/prompt-phones.json, which the unit tests check.
+// web/src/data/prompt-phones.json, which the unit tests check and the demo
+// class is built from.
 
 import { writeFileSync } from 'node:fs'
 import { CaptError, evaluate } from '../web/src/capt.ts'
@@ -47,6 +48,6 @@ for (const p of PROMPTS) {
   await pause(300)
 }
 
-writeFileSync(new URL('../web/test/fixtures/prompt-phones.json', import.meta.url), JSON.stringify(phones, null, 2) + '\n')
+writeFileSync(new URL('../web/src/data/prompt-phones.json', import.meta.url), JSON.stringify(phones, null, 2) + '\n')
 console.log(problems.length ? `\n${problems.length} problem(s):\n${problems.join('\n')}` : `\nAll ${PROMPTS.length} prompts ok.`)
 process.exit(problems.length ? 1 : 0)

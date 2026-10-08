@@ -7,7 +7,7 @@ import { SOUNDS, soundById, soundForPhone } from '../src/sounds.ts'
 
 // Phones CAPT reported for each prompt, saved by tools/check-prompts.ts.
 const phones: Record<string, string[][]> = JSON.parse(
-  readFileSync(new URL('fixtures/prompt-phones.json', import.meta.url), 'utf8'),
+  readFileSync(new URL('../src/data/prompt-phones.json', import.meta.url), 'utf8'),
 )
 
 test('prompt ids are unique', () => {

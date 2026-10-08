@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import type { Evaluation } from '../src/capt.ts'
 import type { Attempt, Learner } from '../src/store.ts'
-import { attemptAccuracy, classImprovement, classSoundDifficulties, improvement, soundsToWorkOn, turnsThisSession } from '../src/insights.ts'
+import { classImprovement, classSoundDifficulties, improvement, phoneScores, soundBySoundChange, soundsToWorkOn, turnsThisSession } from '../src/insights.ts'
 
 const learner = (name: string): Learner => ({ id: name.toLowerCase(), classId: 'c', name, avatar: 'kid-01', createdAt: 0 })
 const [amara, chidi, kofi, wanjiru, zuri] = ['Amara', 'Chidi', 'Kofi', 'Wanjiru', 'Zuri'].map(learner)
@@ -88,7 +88,8 @@ test('pause words and missed sounds are handled', () => {
   const a = attempt(amara, 's', { T: 0.9 })
   a.evaluation.words.push({ text: '', startMs: 0, durationMs: 0, sounds: [{ reference: 'T', score: 0, kind: 'match', heard: [] }] })
   a.evaluation.words[0].sounds.push({ reference: 'S', score: 0.9, kind: 'deletion', heard: [] })
-  assert.equal(attemptAccuracy(a.evaluation), 0.45) // T 0.9 and a missed S, not the pause
+  // T 0.9 and a missed S (0); the pause's T isn't counted.
+  assert.deepEqual(Object.fromEntries(phoneScores([a])), { T: [0.9], S: [0] })
 })
 
 // A class of 30, where every child says th, r and v four times. Three
@@ -150,6 +151,16 @@ test('steady, needing support, and not enough practice yet', () => {
   assert.equal(improvement(kofi, sessions(kofi, [{ T: 0.85 }, { T: 0.7 }, { T: 0.6 }])).trend, 'needs-support')
   assert.equal(improvement(zuri, sessions(zuri, [{ T: 0.2 }])).trend, 'not-enough-practice')
   assert.equal(improvement(wanjiru, []).trend, 'not-enough-practice')
+})
+
+test("a different mix of sentences isn't mistaken for improvement", () => {
+  // Same child, same skill: weak th (0.3), good v (0.9). Early sessions
+  // happen to be th-heavy sentences, recent ones v-heavy. Comparing whole
+  // sentences would call this improvement; comparing sound by sound doesn't.
+  const early = [attempt(kofi, 'a', { T: 0.3, D: 0.3, v: 0.9 }), attempt(kofi, 'b', { T: 0.3, D: 0.3, v: 0.9 })]
+  const recent = [attempt(kofi, 'c', { T: 0.3, v: 0.9, f: 0.9 }), attempt(kofi, 'd', { T: 0.3, v: 0.9, f: 0.9 })]
+  assert.equal(soundBySoundChange(early, recent), 0)
+  assert.equal(improvement(kofi, [...early, ...recent]).trend, 'steady')
 })
 
 test('the class list shows improving children first, biggest gain first', () => {

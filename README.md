@@ -69,6 +69,10 @@ node tools/capt-live-check.ts       # terminal 2, from the repo root
 
 It synthesizes speech with VoiceGen, checks REST, WebSocket, a planted error and an out-of-vocabulary word, and refreshes the fixtures.
 
+### Demo class
+
+Open `#/check` and press **Load demo class**: 30 children with two weeks of simulated practice and today's session open and empty, so the teacher view has real content. It includes the five simulated learners and their planted errors (Amara th, Chidi v, Wanjiru r, Kofi sh and ch; Zuri none), plus Tunde and Achieng improving and Musa slipping. **Remove demo class** deletes it. Loading it again gives an identical class.
+
 ### Microphone and HTTPS
 
 Browsers only allow the microphone on `https://` pages or `localhost`. Opening the app on a tablet at `http://<laptop-ip>:8080` blocks the mic. For the tablet demo, serve over HTTPS or use a tunnel.

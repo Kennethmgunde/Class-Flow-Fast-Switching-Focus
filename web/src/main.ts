@@ -22,7 +22,7 @@ async function route(): Promise<void> {
   if (turn) await renderTurn(app, store, turn[1])
   else if (path === '/class') await renderRoster(app, store)
   else if (path === '/teacher') await renderTeacher(app, store)
-  else if (path === '/check') renderCheck(app)
+  else if (path === '/check') renderCheck(app, store)
   else await renderSetup(app, store)
 }
 

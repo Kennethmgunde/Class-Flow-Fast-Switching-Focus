@@ -3,11 +3,11 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { PROMPTS } from '../src/prompts.ts'
 import { SOUNDS, soundById } from '../src/sounds.ts'
-import { LEARNERS, TEST_PROMPTS, sayAs } from '../../tools/simulated-learners.ts'
+import { LEARNERS, TEST_PROMPTS, sayAs } from '../src/demo/simulated-learners.ts'
 
 // Phones CAPT reported for each prompt, saved by tools/check-prompts.ts.
 const phones: Record<string, string[][]> = JSON.parse(
-  readFileSync(new URL('fixtures/prompt-phones.json', import.meta.url), 'utf8'),
+  readFileSync(new URL('../src/data/prompt-phones.json', import.meta.url), 'utf8'),
 )
 
 // The words of a prompt, paired with the phones CAPT found in each.

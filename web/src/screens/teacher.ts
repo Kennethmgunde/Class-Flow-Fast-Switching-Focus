@@ -5,7 +5,7 @@
 // Glanceable: no raw scores, except in the "All sounds" detail.
 
 import { avatarElement } from '../avatars.ts'
-import { classImprovement, classSoundDifficulties, soundsToWorkOn, turnsThisSession, type Improvement, type SoundDifficulty } from '../insights.ts'
+import { childrenToHelp, classImprovement, classSoundDifficulties, soundsToWorkOn, turnsThisSession, type Improvement, type SoundDifficulty } from '../insights.ts'
 import { pickClass } from '../selected-class.ts'
 import type { Learner, Session, Store } from '../store.ts'
 import { h } from '../ui/dom.ts'
@@ -64,13 +64,16 @@ function turnsPanel(learners: Learner[], turns: ReturnType<typeof turnsThisSessi
 
 function soundsPanel(difficulties: SoundDifficulty[], attempts: number): HTMLElement {
   const focus = soundsToWorkOn(difficulties, TOP_SOUNDS)
+  const oneToOne = childrenToHelp(difficulties, focus)
   return h('section', { class: 'card panel' },
     h('h2', {}, 'Sounds to work on'),
     h('p', { class: 'muted' }, `From ${attempts} ${attempts === 1 ? 'attempt' : 'attempts'} so far`),
     difficulties.length === 0
       ? h('p', {}, 'Not enough practice yet. Sounds appear here after a few turns.')
-      : focus.length === 0
+      : focus.length === 0 && oneToOne.length === 0
         ? h('p', {}, 'No sound stands out yet. The class is doing evenly.')
+        : focus.length === 0
+        ? null
         : h('ol', { class: 'sound-list' },
             focus.map((d) => h('li', {},
               h('div', { class: 'sound-name' }, d.sound.label),
@@ -82,6 +85,14 @@ function soundsPanel(difficulties: SoundDifficulty[], attempts: number): HTMLEle
                 ),
             )),
           ),
+    oneToOne.length > 0 && h('h3', {}, 'Help one-to-one'),
+    oneToOne.length > 0 &&
+      h('ul', { class: 'one-to-one' },
+        oneToOne.map((c) => h('li', {},
+          avatarElement(c.learner.avatar, 'avatar small'),
+          h('div', {}, h('strong', {}, c.learner.name), h('p', { class: 'muted' }, c.sounds.map((s) => s.label).join(', '))),
+        )),
+      ),
     difficulties.length > 0 &&
       h('details', { class: 'all-sounds' },
         h('summary', {}, 'All sounds'),

@@ -13,7 +13,7 @@
 
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { PROMPTS } from '../web/src/prompts.ts'
-import { LEARNERS, TEST_PROMPTS, sayAs } from './simulated-learners.ts'
+import { LEARNERS, TEST_PROMPTS, sayAs } from '../web/src/demo/simulated-learners.ts'
 import { synthesizeForCapt } from './voicegen.ts'
 
 const OUT = new URL('../data/generated/learners/', import.meta.url)
