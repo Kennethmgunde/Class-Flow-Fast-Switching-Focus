@@ -88,6 +88,8 @@ The mic is captured at the browser's native rate (usually 44.1 or 48 kHz) and re
 
 - No human recordings: test audio is synthesized (quest rule).
 - Learners are stored by first name or avatar only, on the device.
+- Storage is IndexedDB in the browser (`web/src/store.ts`): classes, learners, sessions and attempts, with each attempt holding CAPT's per-word and per-sound scores. Nothing is sent to a server except the audio CAPT scores.
+- Deleting a learner or a class also deletes their attempts.
 
 ## Project tracking
 
