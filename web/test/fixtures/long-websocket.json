@@ -1,0 +1,2056 @@
+{
+  "score": 0.86804444,
+  "words": [
+    {
+      "text": "the",
+      "startMs": 60,
+      "durationMs": 89,
+      "sounds": [
+        {
+          "reference": "D",
+          "score": 0.99157894,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "D",
+              "confidence": 0.984,
+              "startMs": 60,
+              "durationMs": 59
+            },
+            {
+              "token": "t",
+              "confidence": 0.003,
+              "startMs": 60,
+              "durationMs": 59
+            }
+          ]
+        },
+        {
+          "reference": "@",
+          "score": 0.987,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "@",
+              "confidence": 0.987,
+              "startMs": 119,
+              "durationMs": 30
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "little",
+      "startMs": 149,
+      "durationMs": 211,
+      "sounds": [
+        {
+          "reference": "l",
+          "score": 0.9968085,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "l",
+              "confidence": 0.994,
+              "startMs": 149,
+              "durationMs": 61
+            }
+          ]
+        },
+        {
+          "reference": "I",
+          "score": 0.9968085,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "I",
+              "confidence": 0.994,
+              "startMs": 210,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "t",
+          "score": 0.95631576,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "t",
+              "confidence": 0.917,
+              "startMs": 269,
+              "durationMs": 30
+            },
+            {
+              "token": "v",
+              "confidence": 0.077,
+              "startMs": 269,
+              "durationMs": 30
+            }
+          ]
+        },
+        {
+          "reference": "l=",
+          "score": 0.98101896,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "l=",
+              "confidence": 0.98101896,
+              "startMs": 299,
+              "durationMs": 61
+            },
+            {
+              "token": "@`",
+              "confidence": 0.012987013,
+              "startMs": 299,
+              "durationMs": 61
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "brown",
+      "startMs": 360,
+      "durationMs": 299,
+      "sounds": [
+        {
+          "reference": "b",
+          "score": 0.99840426,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "b",
+              "confidence": 0.997,
+              "startMs": 360,
+              "durationMs": 60
+            },
+            {
+              "token": "p",
+              "confidence": 0.003,
+              "startMs": 360,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "r\\",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "r\\",
+              "confidence": 1,
+              "startMs": 420,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "aU",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "aU",
+              "confidence": 1,
+              "startMs": 480,
+              "durationMs": 90
+            }
+          ]
+        },
+        {
+          "reference": "n",
+          "score": 0.9978261,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "n",
+              "confidence": 0.996,
+              "startMs": 570,
+              "durationMs": 89
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "dog",
+      "startMs": 669,
+      "durationMs": 258,
+      "sounds": [
+        {
+          "reference": "d",
+          "score": 0.99210525,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "d",
+              "confidence": 0.985,
+              "startMs": 669,
+              "durationMs": 50
+            },
+            {
+              "token": "D",
+              "confidence": 0.003,
+              "startMs": 669,
+              "durationMs": 50
+            }
+          ]
+        },
+        {
+          "reference": "O",
+          "score": 0.89937305,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "O",
+              "confidence": 0.8088088,
+              "startMs": 719,
+              "durationMs": 119
+            },
+            {
+              "token": "@`",
+              "confidence": 0.05205205,
+              "startMs": 719,
+              "durationMs": 119
+            },
+            {
+              "token": "A",
+              "confidence": 0.04904905,
+              "startMs": 719,
+              "durationMs": 119
+            },
+            {
+              "token": "@",
+              "confidence": 0.041041043,
+              "startMs": 719,
+              "durationMs": 119
+            },
+            {
+              "token": "l=",
+              "confidence": 0.016016016,
+              "startMs": 719,
+              "durationMs": 119
+            },
+            {
+              "token": "oU",
+              "confidence": 0.012012012,
+              "startMs": 719,
+              "durationMs": 119
+            },
+            {
+              "token": "d",
+              "confidence": 0.008008008,
+              "startMs": 719,
+              "durationMs": 119
+            },
+            {
+              "token": "n",
+              "confidence": 0.004004004,
+              "startMs": 719,
+              "durationMs": 119
+            },
+            {
+              "token": "V",
+              "confidence": 0.003003003,
+              "startMs": 719,
+              "durationMs": 119
+            },
+            {
+              "token": "n=",
+              "confidence": 0.002002002,
+              "startMs": 719,
+              "durationMs": 119
+            }
+          ]
+        },
+        {
+          "reference": "g",
+          "score": 0.9100164,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "g",
+              "confidence": 0.8308308,
+              "startMs": 839,
+              "durationMs": 88
+            },
+            {
+              "token": "r\\",
+              "confidence": 0.021021022,
+              "startMs": 839,
+              "durationMs": 88
+            },
+            {
+              "token": "b",
+              "confidence": 0.019019019,
+              "startMs": 839,
+              "durationMs": 88
+            },
+            {
+              "token": "d",
+              "confidence": 0.002002002,
+              "startMs": 839,
+              "durationMs": 88
+            },
+            {
+              "token": "z",
+              "confidence": 0.002002002,
+              "startMs": 839,
+              "durationMs": 88
+            },
+            {
+              "token": "v",
+              "confidence": 0.002002002,
+              "startMs": 839,
+              "durationMs": 88
+            },
+            {
+              "token": "l",
+              "confidence": 0.001001001,
+              "startMs": 839,
+              "durationMs": 88
+            },
+            {
+              "token": "A",
+              "confidence": 0.001001001,
+              "startMs": 839,
+              "durationMs": 88
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "ran",
+      "startMs": 933,
+      "durationMs": 177,
+      "sounds": [
+        {
+          "reference": "r\\",
+          "score": 0.954,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "r\\",
+              "confidence": 0.954,
+              "startMs": 933,
+              "durationMs": 56
+            },
+            {
+              "token": "t",
+              "confidence": 0.018,
+              "startMs": 933,
+              "durationMs": 56
+            },
+            {
+              "token": "g",
+              "confidence": 0.018,
+              "startMs": 933,
+              "durationMs": 56
+            },
+            {
+              "token": "p",
+              "confidence": 0.005,
+              "startMs": 933,
+              "durationMs": 56
+            },
+            {
+              "token": "d",
+              "confidence": 0.003,
+              "startMs": 933,
+              "durationMs": 56
+            },
+            {
+              "token": "f",
+              "confidence": 0.002,
+              "startMs": 933,
+              "durationMs": 56
+            }
+          ]
+        },
+        {
+          "reference": "{",
+          "score": 0.9741936,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "{",
+              "confidence": 0.952,
+              "startMs": 990,
+              "durationMs": 60
+            },
+            {
+              "token": "E",
+              "confidence": 0.048,
+              "startMs": 990,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "n",
+          "score": 0.9918479,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "n",
+              "confidence": 0.985,
+              "startMs": 1050,
+              "durationMs": 60
+            },
+            {
+              "token": "d",
+              "confidence": 0.01,
+              "startMs": 1050,
+              "durationMs": 60
+            },
+            {
+              "token": "t",
+              "confidence": 0.005,
+              "startMs": 1050,
+              "durationMs": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "across",
+      "startMs": 1110,
+      "durationMs": 390,
+      "sounds": [
+        {
+          "reference": "@",
+          "score": 0.696,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "@",
+              "confidence": 0.696,
+              "startMs": 1110,
+              "durationMs": 51
+            },
+            {
+              "token": "d",
+              "confidence": 0.257,
+              "startMs": 1110,
+              "durationMs": 51
+            },
+            {
+              "token": "t",
+              "confidence": 0.042,
+              "startMs": 1110,
+              "durationMs": 51
+            },
+            {
+              "token": "A",
+              "confidence": 0.002,
+              "startMs": 1110,
+              "durationMs": 51
+            }
+          ]
+        },
+        {
+          "reference": "k",
+          "score": 0.9994737,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "k",
+              "confidence": 0.999,
+              "startMs": 1170,
+              "durationMs": 60
+            },
+            {
+              "token": "@",
+              "confidence": 0.001,
+              "startMs": 1170,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "r\\",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "r\\",
+              "confidence": 1,
+              "startMs": 1230,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "O",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "O",
+              "confidence": 1,
+              "startMs": 1290,
+              "durationMs": 90
+            }
+          ]
+        },
+        {
+          "reference": "s",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "s",
+              "confidence": 1,
+              "startMs": 1380,
+              "durationMs": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "the",
+      "startMs": 1510,
+      "durationMs": 109,
+      "sounds": [
+        {
+          "reference": "D",
+          "score": 0.99,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "D",
+              "confidence": 0.981,
+              "startMs": 1510,
+              "durationMs": 50
+            },
+            {
+              "token": "t",
+              "confidence": 0.019,
+              "startMs": 1510,
+              "durationMs": 50
+            }
+          ]
+        },
+        {
+          "reference": "@",
+          "score": 0.974975,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "@",
+              "confidence": 0.974975,
+              "startMs": 1560,
+              "durationMs": 59
+            },
+            {
+              "token": "V",
+              "confidence": 0.005005005,
+              "startMs": 1560,
+              "durationMs": 59
+            },
+            {
+              "token": "i",
+              "confidence": 0.005005005,
+              "startMs": 1560,
+              "durationMs": 59
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "green",
+      "startMs": 1620,
+      "durationMs": 246,
+      "sounds": [
+        {
+          "reference": "g",
+          "score": 0.9957447,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "g",
+              "confidence": 0.992,
+              "startMs": 1620,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "r\\",
+          "score": 0.992,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "r\\",
+              "confidence": 0.992,
+              "startMs": 1679,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "i",
+          "score": 0.968117,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "i",
+              "confidence": 0.94005996,
+              "startMs": 1739,
+              "durationMs": 60
+            },
+            {
+              "token": "I",
+              "confidence": 0.038961038,
+              "startMs": 1739,
+              "durationMs": 60
+            },
+            {
+              "token": "eI",
+              "confidence": 0.012987013,
+              "startMs": 1739,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "n",
+          "score": 0.75024974,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "n",
+              "confidence": 0.5404595,
+              "startMs": 1801,
+              "durationMs": 65
+            },
+            {
+              "token": "I",
+              "confidence": 0.26473525,
+              "startMs": 1801,
+              "durationMs": 65
+            },
+            {
+              "token": "N",
+              "confidence": 0.066933066,
+              "startMs": 1801,
+              "durationMs": 65
+            },
+            {
+              "token": "m",
+              "confidence": 0.05894106,
+              "startMs": 1801,
+              "durationMs": 65
+            },
+            {
+              "token": "@",
+              "confidence": 0.018981019,
+              "startMs": 1801,
+              "durationMs": 65
+            },
+            {
+              "token": "z",
+              "confidence": 0.018981019,
+              "startMs": 1801,
+              "durationMs": 65
+            },
+            {
+              "token": "d",
+              "confidence": 0.012987013,
+              "startMs": 1801,
+              "durationMs": 65
+            },
+            {
+              "token": "t",
+              "confidence": 0.005994006,
+              "startMs": 1801,
+              "durationMs": 65
+            },
+            {
+              "token": "s",
+              "confidence": 0.002997003,
+              "startMs": 1801,
+              "durationMs": 65
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "field",
+      "startMs": 1889,
+      "durationMs": 451,
+      "sounds": [
+        {
+          "reference": "f",
+          "score": 0.99666333,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "f",
+              "confidence": 0.993994,
+              "startMs": 1889,
+              "durationMs": 90
+            }
+          ]
+        },
+        {
+          "reference": "i",
+          "score": 0.9968085,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "i",
+              "confidence": 0.994,
+              "startMs": 1979,
+              "durationMs": 149
+            }
+          ]
+        },
+        {
+          "reference": "l",
+          "score": 0.9968085,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "l",
+              "confidence": 0.994,
+              "startMs": 2128,
+              "durationMs": 89
+            }
+          ]
+        },
+        {
+          "reference": "d",
+          "score": 0.99684215,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "d",
+              "confidence": 0.994,
+              "startMs": 2217,
+              "durationMs": 123
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "and",
+      "startMs": 2430,
+      "durationMs": 180,
+      "sounds": [
+        {
+          "reference": "{",
+          "score": 0.9860215,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "{",
+              "confidence": 0.974,
+              "startMs": 2430,
+              "durationMs": 90
+            },
+            {
+              "token": "@",
+              "confidence": 0.026,
+              "startMs": 2430,
+              "durationMs": 90
+            }
+          ]
+        },
+        {
+          "reference": "n",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "n",
+              "confidence": 1,
+              "startMs": 2520,
+              "durationMs": 30
+            }
+          ]
+        },
+        {
+          "reference": "d",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "d",
+              "confidence": 1,
+              "startMs": 2550,
+              "durationMs": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "jumped",
+      "startMs": 2610,
+      "durationMs": 230,
+      "sounds": [
+        {
+          "reference": "dZ",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "dZ",
+              "confidence": 1,
+              "startMs": 2610,
+              "durationMs": 30
+            }
+          ]
+        },
+        {
+          "reference": "V",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "V",
+              "confidence": 1,
+              "startMs": 2640,
+              "durationMs": 90
+            }
+          ]
+        },
+        {
+          "reference": "m",
+          "score": 0.9982954,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "m",
+              "confidence": 0.997,
+              "startMs": 2730,
+              "durationMs": 50
+            },
+            {
+              "token": "N",
+              "confidence": 0.003,
+              "startMs": 2730,
+              "durationMs": 50
+            }
+          ]
+        },
+        {
+          "reference": "p",
+          "score": 0.82228297,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "p",
+              "confidence": 0.66233766,
+              "startMs": 2780,
+              "durationMs": 20
+            },
+            {
+              "token": "k",
+              "confidence": 0.002997003,
+              "startMs": 2780,
+              "durationMs": 20
+            }
+          ]
+        },
+        {
+          "reference": "t",
+          "score": 0.8201798,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "t",
+              "confidence": 0.65834165,
+              "startMs": 2800,
+              "durationMs": 40
+            },
+            {
+              "token": "p",
+              "confidence": 0.33466533,
+              "startMs": 2800,
+              "durationMs": 40
+            },
+            {
+              "token": "r\\",
+              "confidence": 0.003996004,
+              "startMs": 2800,
+              "durationMs": 40
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "over",
+      "startMs": 2840,
+      "durationMs": 190,
+      "sounds": [
+        {
+          "reference": "oU",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "oU",
+              "confidence": 1,
+              "startMs": 2840,
+              "durationMs": 70
+            }
+          ]
+        },
+        {
+          "reference": "v",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "v",
+              "confidence": 1,
+              "startMs": 2910,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "@`",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "@`",
+              "confidence": 1,
+              "startMs": 2970,
+              "durationMs": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "the",
+      "startMs": 3030,
+      "durationMs": 120,
+      "sounds": [
+        {
+          "reference": "D",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "D",
+              "confidence": 1,
+              "startMs": 3030,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "i",
+          "score": 0.9829787,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "i",
+              "confidence": 0.968,
+              "startMs": 3090,
+              "durationMs": 60
+            },
+            {
+              "token": "V",
+              "confidence": 0.032,
+              "startMs": 3090,
+              "durationMs": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "old",
+      "startMs": 3150,
+      "durationMs": 210,
+      "sounds": [
+        {
+          "reference": "oU",
+          "score": 0.996,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "oU",
+              "confidence": 0.996,
+              "startMs": 3150,
+              "durationMs": 91
+            }
+          ]
+        },
+        {
+          "reference": "l",
+          "score": 0.99787235,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "l",
+              "confidence": 0.996,
+              "startMs": 3240,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "d",
+          "score": 0.99841946,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "d",
+              "confidence": 0.996997,
+              "startMs": 3300,
+              "durationMs": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "wooden",
+      "startMs": 3360,
+      "durationMs": 201,
+      "sounds": [
+        {
+          "reference": "w",
+          "score": 0.99891305,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "w",
+              "confidence": 0.998,
+              "startMs": 3360,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "U",
+          "score": 0.9989011,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "U",
+              "confidence": 0.998,
+              "startMs": 3420,
+              "durationMs": 30
+            }
+          ]
+        },
+        {
+          "reference": "d",
+          "score": 0.99789476,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "d",
+              "confidence": 0.996,
+              "startMs": 3450,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "n=",
+          "score": 0.935,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "n=",
+              "confidence": 0.935,
+              "startMs": 3510,
+              "durationMs": 51
+            },
+            {
+              "token": "t",
+              "confidence": 0.017,
+              "startMs": 3510,
+              "durationMs": 51
+            },
+            {
+              "token": "I",
+              "confidence": 0.004,
+              "startMs": 3510,
+              "durationMs": 51
+            },
+            {
+              "token": "d",
+              "confidence": 0.002,
+              "startMs": 3510,
+              "durationMs": 51
+            },
+            {
+              "token": "@",
+              "confidence": 0.002,
+              "startMs": 3510,
+              "durationMs": 51
+            },
+            {
+              "token": "n",
+              "confidence": 0.001,
+              "startMs": 3510,
+              "durationMs": 51
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "fence",
+      "startMs": 3580,
+      "durationMs": 515,
+      "sounds": [
+        {
+          "reference": "f",
+          "score": 0.9766433,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "f",
+              "confidence": 0.957958,
+              "startMs": 3580,
+              "durationMs": 82
+            },
+            {
+              "token": "t",
+              "confidence": 0.018018018,
+              "startMs": 3580,
+              "durationMs": 82
+            },
+            {
+              "token": "n",
+              "confidence": 0.005005005,
+              "startMs": 3580,
+              "durationMs": 82
+            },
+            {
+              "token": "n=",
+              "confidence": 0.001001001,
+              "startMs": 3580,
+              "durationMs": 82
+            }
+          ]
+        },
+        {
+          "reference": "E",
+          "score": 0.8774144,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "E",
+              "confidence": 0.76953906,
+              "startMs": 3662,
+              "durationMs": 116
+            },
+            {
+              "token": "I",
+              "confidence": 0.15531062,
+              "startMs": 3662,
+              "durationMs": 116
+            },
+            {
+              "token": "{",
+              "confidence": 0.03006012,
+              "startMs": 3662,
+              "durationMs": 116
+            },
+            {
+              "token": "V",
+              "confidence": 0.008016032,
+              "startMs": 3662,
+              "durationMs": 116
+            },
+            {
+              "token": "n=",
+              "confidence": 0.001002004,
+              "startMs": 3662,
+              "durationMs": 116
+            },
+            {
+              "token": "t",
+              "confidence": 0.001002004,
+              "startMs": 3662,
+              "durationMs": 116
+            },
+            {
+              "token": "@",
+              "confidence": 0.001002004,
+              "startMs": 3662,
+              "durationMs": 116
+            }
+          ]
+        },
+        {
+          "reference": "n",
+          "score": 0.9793478,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "n",
+              "confidence": 0.962,
+              "startMs": 3779,
+              "durationMs": 38
+            },
+            {
+              "token": "t",
+              "confidence": 0.001,
+              "startMs": 3779,
+              "durationMs": 38
+            },
+            {
+              "token": "n=",
+              "confidence": 0.001,
+              "startMs": 3779,
+              "durationMs": 38
+            },
+            {
+              "token": "r\\",
+              "confidence": 0.001,
+              "startMs": 3779,
+              "durationMs": 38
+            }
+          ]
+        },
+        {
+          "reference": "s",
+          "score": 0.9673684,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "s",
+              "confidence": 0.938,
+              "startMs": 4004,
+              "durationMs": 91
+            },
+            {
+              "token": "b",
+              "confidence": 0.017,
+              "startMs": 4004,
+              "durationMs": 91
+            },
+            {
+              "token": "t",
+              "confidence": 0.005,
+              "startMs": 4004,
+              "durationMs": 91
+            },
+            {
+              "token": "i",
+              "confidence": 0.002,
+              "startMs": 4004,
+              "durationMs": 91
+            },
+            {
+              "token": "tS",
+              "confidence": 0.001,
+              "startMs": 4004,
+              "durationMs": 91
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "before",
+      "startMs": 0,
+      "durationMs": 0,
+      "sounds": [
+        {
+          "reference": "b",
+          "score": 0,
+          "kind": "deletion",
+          "heard": []
+        },
+        {
+          "reference": "i",
+          "score": 0,
+          "kind": "deletion",
+          "heard": []
+        },
+        {
+          "reference": "f",
+          "score": 0,
+          "kind": "deletion",
+          "heard": []
+        },
+        {
+          "reference": "O",
+          "score": 0,
+          "kind": "deletion",
+          "heard": []
+        },
+        {
+          "reference": "r\\",
+          "score": 0,
+          "kind": "deletion",
+          "heard": []
+        }
+      ]
+    },
+    {
+      "text": "it",
+      "startMs": 0,
+      "durationMs": 0,
+      "sounds": [
+        {
+          "reference": "I",
+          "score": 0,
+          "kind": "deletion",
+          "heard": []
+        },
+        {
+          "reference": "t",
+          "score": 0,
+          "kind": "deletion",
+          "heard": []
+        }
+      ]
+    },
+    {
+      "text": "stopped",
+      "startMs": 4648,
+      "durationMs": 59,
+      "sounds": [
+        {
+          "reference": "s",
+          "score": 0,
+          "kind": "deletion",
+          "heard": []
+        },
+        {
+          "reference": "t",
+          "score": 0,
+          "kind": "deletion",
+          "heard": []
+        },
+        {
+          "reference": "A",
+          "score": 0,
+          "kind": "deletion",
+          "heard": []
+        },
+        {
+          "reference": "p",
+          "score": 0,
+          "kind": "deletion",
+          "heard": []
+        },
+        {
+          "reference": "t",
+          "score": 0.9863158,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "t",
+              "confidence": 0.974,
+              "startMs": 4648,
+              "durationMs": 59
+            },
+            {
+              "token": "aI",
+              "confidence": 0.017,
+              "startMs": 4648,
+              "durationMs": 59
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "to",
+      "startMs": 4707,
+      "durationMs": 60,
+      "sounds": [
+        {
+          "reference": "t",
+          "score": 0,
+          "kind": "deletion",
+          "heard": []
+        },
+        {
+          "reference": "@",
+          "score": 0.969,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "@",
+              "confidence": 0.969,
+              "startMs": 4707,
+              "durationMs": 60
+            },
+            {
+              "token": "I",
+              "confidence": 0.003,
+              "startMs": 4707,
+              "durationMs": 60
+            },
+            {
+              "token": "u",
+              "confidence": 0.002,
+              "startMs": 4707,
+              "durationMs": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "drink",
+      "startMs": 4767,
+      "durationMs": 273,
+      "sounds": [
+        {
+          "reference": "d",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "d",
+              "confidence": 1,
+              "startMs": 4767,
+              "durationMs": 63
+            }
+          ]
+        },
+        {
+          "reference": "r\\",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "r\\",
+              "confidence": 1,
+              "startMs": 4830,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "I",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "I",
+              "confidence": 1,
+              "startMs": 4890,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "N",
+          "score": 0.9983696,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "N",
+              "confidence": 0.997,
+              "startMs": 4950,
+              "durationMs": 30
+            }
+          ]
+        },
+        {
+          "reference": "k",
+          "score": 0.9984211,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "k",
+              "confidence": 0.997,
+              "startMs": 4980,
+              "durationMs": 60
+            },
+            {
+              "token": "N",
+              "confidence": 0.003,
+              "startMs": 4980,
+              "durationMs": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "some",
+      "startMs": 5043,
+      "durationMs": 237,
+      "sounds": [
+        {
+          "reference": "s",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "s",
+              "confidence": 1,
+              "startMs": 5043,
+              "durationMs": 87
+            }
+          ]
+        },
+        {
+          "reference": "V",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "V",
+              "confidence": 1,
+              "startMs": 5130,
+              "durationMs": 90
+            }
+          ]
+        },
+        {
+          "reference": "m",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "m",
+              "confidence": 1,
+              "startMs": 5220,
+              "durationMs": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "cold",
+      "startMs": 5280,
+      "durationMs": 267,
+      "sounds": [
+        {
+          "reference": "k",
+          "score": 0.99789476,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "k",
+              "confidence": 0.996,
+              "startMs": 5280,
+              "durationMs": 62
+            },
+            {
+              "token": "t",
+              "confidence": 0.004,
+              "startMs": 5280,
+              "durationMs": 62
+            }
+          ]
+        },
+        {
+          "reference": "oU",
+          "score": 0.92,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "oU",
+              "confidence": 0.92,
+              "startMs": 5343,
+              "durationMs": 85
+            },
+            {
+              "token": "O",
+              "confidence": 0.039,
+              "startMs": 5343,
+              "durationMs": 85
+            },
+            {
+              "token": "V",
+              "confidence": 0.007,
+              "startMs": 5343,
+              "durationMs": 85
+            }
+          ]
+        },
+        {
+          "reference": "l",
+          "score": 0.9787234,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "l",
+              "confidence": 0.96,
+              "startMs": 5428,
+              "durationMs": 61
+            },
+            {
+              "token": "O",
+              "confidence": 0.028,
+              "startMs": 5428,
+              "durationMs": 61
+            },
+            {
+              "token": "U",
+              "confidence": 0.006,
+              "startMs": 5428,
+              "durationMs": 61
+            },
+            {
+              "token": "w",
+              "confidence": 0.004,
+              "startMs": 5428,
+              "durationMs": 61
+            },
+            {
+              "token": "m",
+              "confidence": 0.002,
+              "startMs": 5428,
+              "durationMs": 61
+            }
+          ]
+        },
+        {
+          "reference": "d",
+          "score": 0.96323144,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "d",
+              "confidence": 0.9301397,
+              "startMs": 5489,
+              "durationMs": 58
+            },
+            {
+              "token": "l",
+              "confidence": 0.027944112,
+              "startMs": 5489,
+              "durationMs": 58
+            },
+            {
+              "token": "t",
+              "confidence": 0.00499002,
+              "startMs": 5489,
+              "durationMs": 58
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "water",
+      "startMs": 5547,
+      "durationMs": 273,
+      "sounds": [
+        {
+          "reference": "w",
+          "score": 0.9961957,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "w",
+              "confidence": 0.993,
+              "startMs": 5547,
+              "durationMs": 35
+            }
+          ]
+        },
+        {
+          "reference": "O",
+          "score": 0.9984211,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "O",
+              "confidence": 0.997,
+              "startMs": 5582,
+              "durationMs": 117
+            }
+          ]
+        },
+        {
+          "reference": "t",
+          "score": 0.9984211,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "t",
+              "confidence": 0.997,
+              "startMs": 5699,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "@`",
+          "score": 0.997,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "@`",
+              "confidence": 0.997,
+              "startMs": 5759,
+              "durationMs": 61
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "from",
+      "startMs": 5820,
+      "durationMs": 210,
+      "sounds": [
+        {
+          "reference": "f",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "f",
+              "confidence": 1,
+              "startMs": 5820,
+              "durationMs": 90
+            }
+          ]
+        },
+        {
+          "reference": "r\\",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "r\\",
+              "confidence": 1,
+              "startMs": 5910,
+              "durationMs": 30
+            }
+          ]
+        },
+        {
+          "reference": "V",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "V",
+              "confidence": 1,
+              "startMs": 5940,
+              "durationMs": 30
+            }
+          ]
+        },
+        {
+          "reference": "m",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "m",
+              "confidence": 1,
+              "startMs": 5970,
+              "durationMs": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "the",
+      "startMs": 6030,
+      "durationMs": 59,
+      "sounds": [
+        {
+          "reference": "D",
+          "score": 0.9789474,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "D",
+              "confidence": 0.96,
+              "startMs": 6030,
+              "durationMs": 29
+            }
+          ]
+        },
+        {
+          "reference": "@",
+          "score": 0.96303695,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "@",
+              "confidence": 0.96303695,
+              "startMs": 6059,
+              "durationMs": 30
+            },
+            {
+              "token": "i",
+              "confidence": 0.003996004,
+              "startMs": 6059,
+              "durationMs": 30
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "river",
+      "startMs": 6089,
+      "durationMs": 241,
+      "sounds": [
+        {
+          "reference": "r\\",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "r\\",
+              "confidence": 1,
+              "startMs": 6089,
+              "durationMs": 61
+            }
+          ]
+        },
+        {
+          "reference": "I",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "I",
+              "confidence": 1,
+              "startMs": 6150,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "v",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "v",
+              "confidence": 1,
+              "startMs": 6210,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "@`",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "@`",
+              "confidence": 1,
+              "startMs": 6270,
+              "durationMs": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "near",
+      "startMs": 6330,
+      "durationMs": 240,
+      "sounds": [
+        {
+          "reference": "n",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "n",
+              "confidence": 1,
+              "startMs": 6330,
+              "durationMs": 90
+            }
+          ]
+        },
+        {
+          "reference": "I",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "I",
+              "confidence": 1,
+              "startMs": 6420,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "r\\",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "r\\",
+              "confidence": 1,
+              "startMs": 6480,
+              "durationMs": 90
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "the",
+      "startMs": 6570,
+      "durationMs": 119,
+      "sounds": [
+        {
+          "reference": "D",
+          "score": 0.99157894,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "D",
+              "confidence": 0.984,
+              "startMs": 6570,
+              "durationMs": 59
+            }
+          ]
+        },
+        {
+          "reference": "@",
+          "score": 0.972973,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "@",
+              "confidence": 0.972973,
+              "startMs": 6630,
+              "durationMs": 59
+            },
+            {
+              "token": "V",
+              "confidence": 0.006006006,
+              "startMs": 6630,
+              "durationMs": 59
+            },
+            {
+              "token": "i",
+              "confidence": 0.005005005,
+              "startMs": 6630,
+              "durationMs": 59
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "big",
+      "startMs": 6689,
+      "durationMs": 211,
+      "sounds": [
+        {
+          "reference": "b",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "b",
+              "confidence": 1,
+              "startMs": 6689,
+              "durationMs": 31
+            }
+          ]
+        },
+        {
+          "reference": "I",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "I",
+              "confidence": 1,
+              "startMs": 6720,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "g",
+          "score": 1,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "g",
+              "confidence": 1,
+              "startMs": 6780,
+              "durationMs": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "tree",
+      "startMs": 6900,
+      "durationMs": 300,
+      "sounds": [
+        {
+          "reference": "t",
+          "score": 0.99578947,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "t",
+              "confidence": 0.992,
+              "startMs": 6900,
+              "durationMs": 60
+            },
+            {
+              "token": "T",
+              "confidence": 0.004,
+              "startMs": 6900,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "r\\",
+          "score": 0.996,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "r\\",
+              "confidence": 0.996,
+              "startMs": 6960,
+              "durationMs": 60
+            }
+          ]
+        },
+        {
+          "reference": "i",
+          "score": 0.99787235,
+          "kind": "match",
+          "heard": [
+            {
+              "token": "i",
+              "confidence": 0.996,
+              "startMs": 7020,
+              "durationMs": 180
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

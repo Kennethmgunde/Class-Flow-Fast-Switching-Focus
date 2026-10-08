@@ -4,7 +4,7 @@
 // and resampled afterwards with OfflineAudioContext. Opening an AudioContext
 // at 16 kHz directly fails in Firefox when a mic stream is connected to it.
 
-import { CAPT_SAMPLE_RATE, encodeWav } from './wav'
+import { CAPT_SAMPLE_RATE, encodeWav } from './wav.ts'
 
 // Copies each block of mic samples to the main thread.
 const WORKLET_SOURCE = `
