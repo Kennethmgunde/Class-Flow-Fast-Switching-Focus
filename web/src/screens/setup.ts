@@ -3,9 +3,8 @@
 import type { ClassRoom, Learner, Session, Store } from '../store.ts'
 import { AVATARS, MAX_LEARNERS, checkClassName, checkLearner, nextAvatar } from '../setup-rules.ts'
 import { avatarElement } from '../avatars.ts'
+import { readSelectedClass as readSaved, saveSelectedClass as save } from '../selected-class.ts'
 import { h } from '../ui/dom.ts'
-
-const SELECTED_CLASS_KEY = 'class-flow:selected-class'
 
 export async function renderSetup(root: HTMLElement, store: Store): Promise<void> {
   const ui = new SetupScreen(root, store)
@@ -122,11 +121,19 @@ class SetupScreen {
               : 'Start a session when the class is ready to practise.'),
       ),
       s
-        ? h('button', { class: 'secondary', on: { click: () => this.act(() => this.store.endSession(s.id)) } }, 'End session')
+        ? h('div', { class: 'row' },
+            h('button', { class: 'secondary', on: { click: () => this.act(() => this.store.endSession(s.id)) } }, 'End session'),
+            h('a', { class: 'button primary', href: '#/class' }, 'Open class view'),
+          )
         : h('button', {
             class: 'primary',
             disabled: this.learners.length === 0,
-            on: { click: () => this.act(() => this.store.startSession(this.current!.id)) },
+            on: {
+              click: async () => {
+                await this.store.startSession(this.current!.id)
+                location.hash = '#/class' // hand the tablet to the class
+              },
+            },
           }, 'Start session'),
     )
   }
@@ -246,20 +253,3 @@ function time(ms: number): string {
   return new Date(ms).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
-// The chosen class is remembered on this device only.
-function readSaved(): string | undefined {
-  try {
-    return localStorage.getItem(SELECTED_CLASS_KEY) ?? undefined
-  } catch {
-    return undefined
-  }
-}
-
-function save(id: string | undefined): void {
-  try {
-    if (id) localStorage.setItem(SELECTED_CLASS_KEY, id)
-    else localStorage.removeItem(SELECTED_CLASS_KEY)
-  } catch {
-    // Storage blocked (private mode): the picker just defaults to the newest class.
-  }
-}

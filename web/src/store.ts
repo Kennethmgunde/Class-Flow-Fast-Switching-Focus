@@ -90,6 +90,10 @@ export class Store {
     return l
   }
 
+  async getLearner(learnerId: string): Promise<Learner | undefined> {
+    return this.get<Learner>('learners', learnerId)
+  }
+
   // Alphabetical, so the teacher can scan the roster quickly.
   async listLearners(classId: string): Promise<Learner[]> {
     const learners = await this.allWhere<Learner>('learners', 'classId', classId)
