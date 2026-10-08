@@ -53,3 +53,21 @@ export function toBase64(bytes: Uint8Array): string {
 function writeAscii(view: DataView, offset: number, s: string) {
   for (let i = 0; i < s.length; i++) view.setUint8(offset + i, s.charCodeAt(i))
 }
+
+export type Loudness = { durationSec: number; peak: number; rms: number }
+
+// Duration and loudness of a 16-bit PCM WAV made by encodeWav, so silent
+// or too-short recordings can be caught before they're sent to CAPT.
+export function measureWav(wav: Uint8Array): Loudness {
+  const info = readWavInfo(wav)
+  const view = new DataView(wav.buffer, wav.byteOffset, wav.byteLength)
+  const count = Math.max(0, Math.floor((wav.byteLength - 44) / 2))
+  let peak = 0
+  let sumSquares = 0
+  for (let i = 0; i < count; i++) {
+    const s = view.getInt16(44 + i * 2, true) / 0x8000
+    peak = Math.max(peak, Math.abs(s))
+    sumSquares += s * s
+  }
+  return { durationSec: info.durationSec, peak, rms: count ? Math.sqrt(sumSquares / count) : 0 }
+}

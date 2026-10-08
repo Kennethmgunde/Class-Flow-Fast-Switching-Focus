@@ -1,6 +1,8 @@
 import { Recorder } from '../audio/recorder.ts'
 import { readWavInfo } from '../audio/wav.ts'
 import { evaluate } from '../capt.ts'
+import { clearErrors, readErrors } from '../error-log.ts'
+import { h } from '../ui/dom.ts'
 
 // Developer check: record a sentence, confirm the WAV format, score it with CAPT.
 export function renderCheck(app: HTMLElement): void {
@@ -72,4 +74,20 @@ export function renderCheck(app: HTMLElement): void {
   }
 
   checkCapt()
+  app.querySelector('main')!.append(errorLog())
+}
+
+// Recent problems on this tablet: errors and notes behind the friendly messages children saw.
+function errorLog(): HTMLElement {
+  const errors = readErrors().reverse()
+  const section = h('section', { class: 'card' },
+    h('h2', {}, 'Recent problems on this tablet'),
+    errors.length === 0
+      ? h('p', { class: 'muted' }, 'None.')
+      : h('ul', { class: 'error-log' },
+          errors.map((e) => h('li', {}, h('strong', {}, `${new Date(e.at).toLocaleString()} · ${e.where} · ${e.kind}`), h('br'), e.detail)),
+        ),
+    errors.length > 0 && h('button', { class: 'ghost', on: { click: () => { clearErrors(); section.replaceWith(errorLog()) } } }, 'Clear'),
+  )
+  return section
 }

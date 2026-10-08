@@ -348,3 +348,13 @@ label { display: block; font-weight: 600; margin-bottom: 0.35rem; }
 
 .summary { align-content: center; }
 .summary h2 { font-size: 1.8rem; }
+
+.problem .cheer { font-size: 1.25rem; max-width: 28rem; }
+.problem.ask-teacher {
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius);
+  background: #fff4e0;
+  border: 1px solid #f0c27a;
+}
+.error-log { padding-left: 1.1rem; font-size: 0.9rem; overflow-wrap: anywhere; }
+.error-log li { margin-bottom: 0.5rem; }
