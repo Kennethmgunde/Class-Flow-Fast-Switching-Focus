@@ -1,7 +1,7 @@
 import './style.css'
-import { Recorder } from './audio/recorder'
-import { readWavInfo } from './audio/wav'
-import { evaluate } from './capt'
+import { Recorder } from './audio/recorder.ts'
+import { readWavInfo } from './audio/wav.ts'
+import { evaluate } from './capt.ts'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 

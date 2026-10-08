@@ -27,7 +27,7 @@ The browser can't call CAPT directly, because the demo server sends no CORS head
 |-----------|--------------------------------------------------------------|
 | `web/`    | The tablet web app: roster, practice flow, teacher view      |
 | `server/` | CAPT proxy (REST `/evaluate` and WebSocket `/streaming-evaluate`) |
-| `tools/`  | Synthesized test audio and seeded learning history          |
+| `tools/`  | VoiceGen speech synthesis (`voicegen.ts`), live CAPT check, and later the test audio and seeded history |
 | `docs/`   | Demo script, measurements, sales one-pager                   |
 
 ## Stack
@@ -58,7 +58,16 @@ cd ../server && go run .     # serves web/dist and the proxy on :8080
 
 Server flags: `-addr` (default `:8080`), `-capt` (CAPT base URL), `-web` (built web app directory).
 
-Tests: `cd web && npm test`.
+Tests: `cd web && npm test`. These run offline, using CAPT responses saved in `web/test/fixtures/`.
+
+Live CAPT check, which sends a few requests to the shared demo server through the Go proxy (run it occasionally, not in a loop):
+
+```sh
+cd server && go run .               # terminal 1
+node tools/capt-live-check.ts       # terminal 2, from the repo root
+```
+
+It synthesizes speech with VoiceGen, checks REST, WebSocket, a planted error and an out-of-vocabulary word, and refreshes the fixtures.
 
 ### Microphone and HTTPS
 
