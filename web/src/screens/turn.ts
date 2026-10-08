@@ -13,6 +13,7 @@ import { evaluate, type Evaluation } from '../capt.ts'
 import { logError, logNote } from '../error-log.ts'
 import { cheer, choosePrompts, starsFor, wordFeedback } from '../practice.ts'
 import { SKIP_AFTER, describeError, recordingProblem, unclearResult, withRetry, withTimeout, type Problem } from '../problems.ts'
+import { PromptPlayer } from '../prompt-audio.ts'
 import { PROMPTS, type Prompt } from '../prompts.ts'
 import type { Learner, Session, Store } from '../store.ts'
 import { h } from '../ui/dom.ts'
@@ -51,6 +52,8 @@ class Turn {
   private state: State = { step: 'ready' }
   private saved = 0
   private problemsHere = 0 // problems on the current sentence, to offer a skip
+  private readonly player = new PromptPlayer(() => this.render())
+  private readAloud = -1 // the last sentence read aloud automatically
   private bestStars: number[] = [] // best result per prompt, for the summary
   private stopTimer?: ReturnType<typeof setTimeout>
   private readonly root: HTMLElement
@@ -71,6 +74,13 @@ class Turn {
 
   render(): void {
     const finished = this.state.step === 'finished'
+    // Read each new sentence aloud once, for children who can't read yet.
+    if (this.state.step === 'ready' && this.readAloud !== this.index) {
+      this.readAloud = this.index
+      queueMicrotask(() => void this.player.play(this.prompts[this.index].id))
+      const next = this.prompts[this.index + 1]
+      if (next) this.player.preload(next.id)
+    }
     this.root.replaceChildren(
       h('header', { class: 'topbar turn-bar' },
         avatarElement(this.learner.avatar, 'avatar big'),
@@ -93,8 +103,18 @@ class Turn {
       ),
       h('p', { class: 'say-this' }, 'Say this:'),
       s.step === 'feedback' ? this.sentenceWithFeedback(s.evaluation) : h('p', { class: 'sentence' }, prompt.text),
+      (s.step === 'ready' || s.step === 'feedback' || s.step === 'error') && this.listenButton(prompt),
       this.controls(),
     )
+  }
+
+  private listenButton(prompt: Prompt): HTMLElement {
+    const playing = this.player.playing
+    return h('button', {
+      class: `listen ${playing ? 'playing' : ''}`,
+      'aria-label': playing ? 'Stop playing the sentence' : 'Hear the sentence',
+      on: { click: () => (playing ? this.player.stop() : void this.player.play(prompt.id)) },
+    }, speakerIcon(), playing ? 'Playing…' : 'Hear it')
   }
 
   private sentenceWithFeedback(evaluation: Evaluation): HTMLElement {
@@ -164,6 +184,7 @@ class Turn {
 
   private async startRecording(): Promise<void> {
     if (this.state.step !== 'ready') return
+    this.player.stop() // so the microphone doesn't pick up the clip
     this.set({ step: 'starting' })
     try {
       await withTimeout(this.deps.recorder.start(), MIC_LIMIT_MS, 'starting the microphone')
@@ -237,6 +258,10 @@ class Turn {
 
 function micIcon(): SVGElement {
   return svg('<path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2Z"/>')
+}
+
+function speakerIcon(): SVGElement {
+  return svg('<path d="M3 9v6h4l5 5V4L7 9H3Zm13.5 3a4.5 4.5 0 0 0-2.5-4.03v8.06A4.5 4.5 0 0 0 16.5 12ZM14 3.23v2.06a7 7 0 0 1 0 13.42v2.06a9 9 0 0 0 0-17.54Z"/>')
 }
 
 function stopIcon(): SVGElement {
