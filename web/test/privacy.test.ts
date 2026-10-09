@@ -18,7 +18,8 @@ test('a recording is sent to CAPT with no name or id, only the audio and the sen
     return new Response(JSON.stringify({ evaluation_result: { score: 0.9, alignments: [] } }))
   }) as typeof fetch
   try {
-    await evaluate(encodeWav(new Float32Array(16000), 16000), 'the cat sat on the mat', { baseUrl: 'http://x' })
+    const tone = Float32Array.from({ length: 16000 }, (_, i) => 0.3 * Math.sin(i / 8)) // silence would be refused
+    await evaluate(encodeWav(tone, 16000), 'the cat sat on the mat', { baseUrl: 'http://x' })
   } finally {
     globalThis.fetch = realFetch
   }

@@ -1,6 +1,6 @@
 import { Recorder } from '../audio/recorder.ts'
 import { readWavInfo } from '../audio/wav.ts'
-import { evaluate } from '../capt.ts'
+import { CaptError, evaluate } from '../capt.ts'
 import { clearErrors, readErrors } from '../error-log.ts'
 import { h } from '../ui/dom.ts'
 import { DEMO_CLASS_NAME, removeDemoClasses, seedDemoClass } from '../demo/seed.ts'
@@ -72,7 +72,9 @@ export function renderCheck(app: HTMLElement, store: Store): void {
       const { score } = await evaluate(wav, $<HTMLInputElement>('#reference').value)
       result.textContent = `Format: ${format}\nCAPT score: ${score.toFixed(3)}`
     } catch (err) {
-      result.textContent = `Format: ${format}\nCAPT error: ${err}`
+      result.textContent = err instanceof CaptError && err.kind === 'bad-audio'
+        ? `Format: ${format}\nNot sent: ${err.message.replace('not sent to CAPT: ', '')}. Record again, speaking for at least a second.`
+        : `Format: ${format}\nCAPT error: ${err}`
     }
   }
 

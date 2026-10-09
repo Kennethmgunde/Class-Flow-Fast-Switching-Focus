@@ -57,6 +57,9 @@ export function describeError(err: unknown, online = true): Problem {
   if (!online) {
     return { kind: 'offline', message: 'We’re not connected to the internet. Ask your teacher.', askTeacher: true }
   }
+  if (err instanceof CaptError && err.kind === 'bad-audio') {
+    return { kind: 'silent', message: 'I didn’t hear you. Try again, a bit louder.', askTeacher: false }
+  }
   if (err instanceof CaptError && err.kind === 'unavailable') {
     return { kind: 'capt-down', message: 'The listening helper is resting. Ask your teacher.', askTeacher: true }
   }
