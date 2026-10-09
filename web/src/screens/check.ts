@@ -6,7 +6,6 @@ import { h } from '../ui/dom.ts'
 import { DEMO_CLASS_NAME, removeDemoClasses, seedDemoClass } from '../demo/seed.ts'
 import { saveSelectedClass } from '../selected-class.ts'
 import type { Store } from '../store.ts'
-import { backupCard } from './backup-card.ts'
 
 // Developer check: record a sentence, confirm the WAV format, score it with CAPT.
 export function renderCheck(app: HTMLElement, store: Store): void {
@@ -78,7 +77,7 @@ export function renderCheck(app: HTMLElement, store: Store): void {
   }
 
   checkCapt()
-  app.querySelector('main')!.append(demoControls(store), backupCard(store, () => location.reload()), errorLog())
+  app.querySelector('main')!.append(demoControls(store), errorLog())
 }
 
 // Recent problems on this tablet: errors and notes behind the friendly messages children saw.

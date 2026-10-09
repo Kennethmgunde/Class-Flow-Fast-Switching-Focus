@@ -473,4 +473,3 @@ button.link { background: none; border: none; color: var(--muted); text-decorati
 .wipe-confirm { border-color: var(--danger); background: var(--danger-soft); }
 .wipe-confirm h2 { color: var(--danger); }
 #wipe-confirm { flex: 0 1 10rem; text-transform: uppercase; }
-.restore-confirm { padding: 0.75rem 1rem; border-radius: 10px; background: var(--danger-soft); border: 1px solid var(--danger); }

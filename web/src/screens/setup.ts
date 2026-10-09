@@ -6,8 +6,6 @@ import { avatarElement } from '../avatars.ts'
 import { readSelectedClass as readSaved, saveSelectedClass as save } from '../selected-class.ts'
 import { clearErrors } from '../error-log.ts'
 import { PIN_LENGTH, isValidPin, type TeacherLock } from '../teacher-lock.ts'
-import { describeCounts } from '../backup.ts'
-import { backupCard, downloadBackup } from './backup-card.ts'
 import { h } from '../ui/dom.ts'
 
 export async function renderSetup(root: HTMLElement, store: Store, lock: TeacherLock): Promise<void> {
@@ -64,9 +62,8 @@ class SetupScreen {
       ),
       h('main', { class: 'setup' },
         showClassForm ? this.classForm() : null,
-        this.classes.length === 0 ? backupCard(this.store, () => void this.refresh()) : null,
         this.current && !this.creatingClass
-          ? [this.sessionBar(), this.learnerSection(), this.pinSection(), this.privacySection(), backupCard(this.store, () => void this.refresh()), this.dangerZone()]
+          ? [this.sessionBar(), this.learnerSection(), this.pinSection(), this.privacySection(), this.dangerZone()]
           : null,
       ),
     )
@@ -284,7 +281,7 @@ class SetupScreen {
         h('li', {}, 'Recordings are not kept. Each one is sent to Cobalt CAPT for scoring, without the child’s name, then discarded.'),
         h('li', {}, 'Everything stays in this browser on this tablet: no accounts, no copies elsewhere.'),
       ),
-      h('p', { class: 'muted' }, 'Removing a learner or deleting a class also deletes their progress. To clear the tablet completely, use “Wipe everything” below; download a backup first if you might want it back.'),
+      h('p', { class: 'muted' }, 'Removing a learner or deleting a class also deletes their progress. To clear the tablet completely, use “Wipe everything” below. Nothing is copied anywhere else, so deleted data can’t be brought back.'),
     )
   }
 
@@ -307,14 +304,9 @@ class SetupScreen {
         },
       }, 'Wipe everything')
       typed.addEventListener('input', () => { wipe.disabled = typed.value.trim().toUpperCase() !== 'WIPE' })
-      const backupStatus = h('p', { class: 'muted', role: 'status' })
       return h('section', { class: 'card wipe-confirm' },
         h('h2', {}, 'Wipe everything on this tablet?'),
-        h('p', {}, h('strong', {}, `This deletes ${this.wipeSummary}`), ', and the teacher PIN. It can’t be undone without a backup.'),
-        h('div', { class: 'row' },
-          h('button', { class: 'secondary', on: { click: async () => { backupStatus.textContent = await downloadBackup(this.store) } } }, 'Download a backup first'),
-        ),
-        backupStatus,
+        h('p', {}, h('strong', {}, `This deletes ${this.wipeSummary}`), ', and the teacher PIN. It can’t be undone: no copy is kept anywhere.'),
         h('div', { class: 'row' },
           typed,
           wipe,
@@ -359,6 +351,11 @@ class SetupScreen {
     this.confirming = undefined
     await this.refresh()
   }
+}
+
+function describeCounts(c: { classes: number; learners: number; sessions: number; attempts: number }): string {
+  const n = (count: number, one: string, many: string) => `${count} ${count === 1 ? one : many}`
+  return [n(c.classes, 'class', 'classes'), n(c.learners, 'learner', 'learners'), n(c.sessions, 'session', 'sessions'), n(c.attempts, 'score', 'scores')].join(', ')
 }
 
 function time(ms: number): string {
