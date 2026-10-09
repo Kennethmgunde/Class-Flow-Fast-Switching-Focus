@@ -6,6 +6,8 @@ import { avatarElement } from '../avatars.ts'
 import { readSelectedClass as readSaved, saveSelectedClass as save } from '../selected-class.ts'
 import { clearErrors } from '../error-log.ts'
 import { PIN_LENGTH, isValidPin, type TeacherLock } from '../teacher-lock.ts'
+import { describeCounts } from '../backup.ts'
+import { backupCard, downloadBackup } from './backup-card.ts'
 import { h } from '../ui/dom.ts'
 
 export async function renderSetup(root: HTMLElement, store: Store, lock: TeacherLock): Promise<void> {
@@ -25,7 +27,8 @@ class SetupScreen {
   private turns = 0
   private avatar?: string
   private creatingClass = false
-  private confirming?: string // learner id, or 'class', awaiting a delete confirmation
+  private confirming?: string // learner id, 'class' or 'wipe', awaiting a delete confirmation
+  private wipeSummary = '' // what a wipe would delete, shown in its confirmation
 
   constructor(root: HTMLElement, store: Store, lock: TeacherLock) {
     this.root = root
@@ -61,7 +64,10 @@ class SetupScreen {
       ),
       h('main', { class: 'setup' },
         showClassForm ? this.classForm() : null,
-        this.current && !this.creatingClass ? [this.sessionBar(), this.learnerSection(), this.pinSection(), this.privacySection(), this.dangerZone()] : null,
+        this.classes.length === 0 ? backupCard(this.store, () => void this.refresh()) : null,
+        this.current && !this.creatingClass
+          ? [this.sessionBar(), this.learnerSection(), this.pinSection(), this.privacySection(), backupCard(this.store, () => void this.refresh()), this.dangerZone()]
+          : null,
       ),
     )
   }
@@ -278,35 +284,56 @@ class SetupScreen {
         h('li', {}, 'Recordings are not kept. Each one is sent to Cobalt CAPT for scoring, without the child’s name, then discarded.'),
         h('li', {}, 'Everything stays in this browser on this tablet: no accounts, no copies elsewhere.'),
       ),
-      h('p', { class: 'muted' }, 'Removing a learner or deleting a class also deletes their progress. To clear the tablet completely, use “Wipe everything” below.'),
+      h('p', { class: 'muted' }, 'Removing a learner or deleting a class also deletes their progress. To clear the tablet completely, use “Wipe everything” below; download a backup first if you might want it back.'),
     )
   }
 
   private dangerZone(): HTMLElement {
     const c = this.current!
     if (this.confirming === 'wipe') {
-      return h('section', { class: 'danger-zone' },
+      // Typing WIPE makes this a deliberate act, not a stray tap.
+      const typed = h('input', { id: 'wipe-confirm', autocomplete: 'off', placeholder: 'Type WIPE', 'aria-label': 'Type WIPE to confirm' })
+      const wipe = h('button', {
+        class: 'danger',
+        disabled: true,
+        on: {
+          click: () => this.act(async () => {
+            await this.store.wipeEverything()
+            this.lock.removePin()
+            clearErrors()
+            save(undefined)
+            this.current = undefined
+          }),
+        },
+      }, 'Wipe everything')
+      typed.addEventListener('input', () => { wipe.disabled = typed.value.trim().toUpperCase() !== 'WIPE' })
+      const backupStatus = h('p', { class: 'muted', role: 'status' })
+      return h('section', { class: 'card wipe-confirm' },
+        h('h2', {}, 'Wipe everything on this tablet?'),
+        h('p', {}, h('strong', {}, `This deletes ${this.wipeSummary}`), ', and the teacher PIN. It can’t be undone without a backup.'),
         h('div', { class: 'row' },
-          h('p', {}, 'Wipe every class, learner and score on this tablet, and the teacher PIN? This can’t be undone.'),
-          h('button', {
-            class: 'danger',
-            on: {
-              click: () => this.act(async () => {
-                await this.store.wipeEverything()
-                this.lock.removePin()
-                clearErrors()
-                save(undefined)
-                this.current = undefined
-              }),
-            },
-          }, 'Wipe everything'),
+          h('button', { class: 'secondary', on: { click: async () => { backupStatus.textContent = await downloadBackup(this.store) } } }, 'Download a backup first'),
+        ),
+        backupStatus,
+        h('div', { class: 'row' },
+          typed,
+          wipe,
           h('button', { class: 'ghost', on: { click: () => { this.confirming = undefined; this.render() } } }, 'Cancel'),
         ),
       )
     }
     return h('section', { class: 'danger-zone' },
       this.confirming !== 'class' &&
-        h('button', { class: 'ghost danger-text', on: { click: () => { this.confirming = 'wipe'; this.render() } } }, 'Wipe everything on this tablet…'),
+        h('button', {
+          class: 'ghost danger-text',
+          on: {
+            click: async () => {
+              this.wipeSummary = describeCounts(await this.store.counts())
+              this.confirming = 'wipe'
+              this.render()
+            },
+          },
+        }, 'Wipe everything on this tablet…'),
       this.confirming === 'class'
         ? h('div', { class: 'row' },
             h('p', {}, `Delete ${c.name}, its ${this.learners.length} learners and all their progress? This can’t be undone.`),

@@ -469,3 +469,8 @@ button.link { background: none; border: none; color: var(--muted); text-decorati
 .privacy li { margin-bottom: 0.25rem; }
 #pin-1, #pin-2 { flex: 0 1 11rem; }
 #pin-1:not(:placeholder-shown), #pin-2:not(:placeholder-shown) { letter-spacing: 0.3em; }
+
+.wipe-confirm { border-color: var(--danger); background: var(--danger-soft); }
+.wipe-confirm h2 { color: var(--danger); }
+#wipe-confirm { flex: 0 1 10rem; text-transform: uppercase; }
+.restore-confirm { padding: 0.75rem 1rem; border-radius: 10px; background: var(--danger-soft); border: 1px solid var(--danger); }
