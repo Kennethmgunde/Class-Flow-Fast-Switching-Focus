@@ -100,7 +100,7 @@ for (const l of LEARNERS) {
 const times = scored.map((s) => s.ms)
 const report = `# Answer-key check (TRA-811)
 
-The teacher view's sound panel, checked against planted pronunciation errors, with no human rating (quest rule). Five simulated learners (VoiceGen voices, \`tools/make-test-audio.ts\`) each said the same 12 sentences with their planted errors spelled out ("I tink dere are tree"). The real CAPT scored all ${scored.length} clips, and the scores went through the same code the teacher view uses.
+The teacher view's sound panel, checked against planted pronunciation errors, with no human rating (quest rule). Five simulated learners (VoiceGen voices, \`tools/make-test-audio.ts\`) each said the same 14 sentences with their planted errors spelled out ("I tink dere are tree"). The real CAPT scored all ${scored.length} clips, and the scores went through the same code the teacher view uses.
 
 **Result: found ${found} of ${planted} planted errors, with ${falseAlarms} false alarm${falseAlarms === 1 ? '' : 's'}.**
 

@@ -1,6 +1,6 @@
 # Answer-key check (TRA-811)
 
-The teacher view's sound panel, checked against planted pronunciation errors, with no human rating (quest rule). Five simulated learners (VoiceGen voices, `tools/make-test-audio.ts`) each said the same 12 sentences with their planted errors spelled out ("I tink dere are tree"). The real CAPT scored all 70 clips, and the scores went through the same code the teacher view uses.
+The teacher view's sound panel, checked against planted pronunciation errors, with no human rating (quest rule). Five simulated learners (VoiceGen voices, `tools/make-test-audio.ts`) each said the same 14 sentences with their planted errors spelled out ("I tink dere are tree"). The real CAPT scored all 70 clips, and the scores went through the same code the teacher view uses.
 
 **Result: found 6 of 6 planted errors, with 2 false alarms.**
 

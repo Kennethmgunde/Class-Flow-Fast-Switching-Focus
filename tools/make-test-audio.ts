@@ -1,23 +1,25 @@
 // Synthesizes the five simulated learners saying the test sentences, with
 // their planted errors (TRA-809). Output goes to data/generated/learners/,
-// which git ignores; rerun this to recreate it.
+// which git ignores; rerun this to recreate it. The clips are also copied to
+// web/public/demo-voices/, which ships with the app for demo mode (TRA-813).
 //
 //   node tools/make-test-audio.ts         # only clips that are missing
 //   node tools/make-test-audio.ts --all   # every clip again
 //
-// One VoiceGen request per clip (5 learners × 12 sentences = 60), one at a
+// One VoiceGen request per clip (5 learners × 14 sentences = 70), one at a
 // time. Clips are 16 kHz mono 16-bit WAV, ready for CAPT.
 //
 // Writes manifest.json alongside: for every clip, who, which prompt, the
 // sentence they were asked to say, what they actually said, and the planted
 // sounds. That's the answer key for TRA-811.
 
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { PROMPTS } from '../web/src/prompts.ts'
 import { LEARNERS, TEST_PROMPTS, sayAs } from '../web/src/demo/simulated-learners.ts'
 import { synthesizeForCapt } from './voicegen.ts'
 
 const OUT = new URL('../data/generated/learners/', import.meta.url)
+const DEMO = new URL('../web/public/demo-voices/', import.meta.url)
 
 export type ManifestEntry = {
   learner: string
@@ -44,5 +46,9 @@ for (const learner of LEARNERS) {
     await new Promise((r) => setTimeout(r, 300))
   }
 }
+for (const m of manifest) {
+  mkdirSync(new URL(`${m.learner}/`, DEMO), { recursive: true })
+  copyFileSync(new URL(m.file, OUT), new URL(m.file, DEMO))
+}
 writeFileSync(new URL('manifest.json', OUT), JSON.stringify(manifest, null, 2) + '\n')
-console.log(`\n${manifest.length} clips in data/generated/learners/`)
+console.log(`\n${manifest.length} clips in data/generated/learners/ and web/public/demo-voices/`)

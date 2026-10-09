@@ -4,6 +4,7 @@ import { CaptError, evaluate } from '../capt.ts'
 import { clearErrors, readErrors } from '../error-log.ts'
 import { h } from '../ui/dom.ts'
 import { DEMO_CLASS_NAME, removeDemoClasses, seedDemoClass } from '../demo/seed.ts'
+import { demoVoicesOn, setDemoVoices } from '../demo/demo-voices.ts'
 import { saveSelectedClass } from '../selected-class.ts'
 import type { Store } from '../store.ts'
 
@@ -131,5 +132,9 @@ function demoControls(store: Store): HTMLElement {
       h('a', { class: 'button ghost', href: '#/teacher' }, 'Teacher view'),
     ),
     status,
+    h('label', { class: 'row' },
+      h('input', { type: 'checkbox', checked: demoVoicesOn(), on: { change: (e: Event) => setDemoVoices((e.currentTarget as HTMLInputElement).checked) } }),
+      'Demo voices: Amara, Chidi, Wanjiru, Kofi and Zuri in the demo class speak with their simulated voices instead of the microphone.',
+    ),
   )
 }

@@ -8,6 +8,7 @@
 
 import { Recorder } from '../audio/recorder.ts'
 import { avatarElement } from '../avatars.ts'
+import { DemoVoice, demoPrompts, demoVoiceFor } from '../demo/demo-voices.ts'
 import { measureWav } from '../audio/wav.ts'
 import { evaluate, type Evaluation } from '../capt.ts'
 import { logError, logNote } from '../error-log.ts'
@@ -23,7 +24,8 @@ const MIC_LIMIT_MS = 8000 // longest a microphone start or stop may take
 
 // What the screen needs to record and score. Swappable for previews.
 export type TurnDeps = {
-  recorder: { start(): Promise<void>; stop(): Promise<Uint8Array> }
+  // `onEnd` lets a demo voice stop itself when its clip ends.
+  recorder: { start(promptId: string, onEnd: () => void): Promise<void>; stop(): Promise<Uint8Array> }
   evaluate: (wav: Uint8Array, referenceText: string) => Promise<Evaluation>
 }
 
@@ -34,8 +36,10 @@ export async function renderTurn(root: HTMLElement, store: Store, learnerId: str
     location.hash = '#/class'
     return
   }
-  const prompts = choosePrompts(PROMPTS, await store.attemptsForLearner(learner.id))
-  new Turn(root, store, learner, session, prompts, deps ?? { recorder: new Recorder(), evaluate: (w, t) => evaluate(w, t) }).render()
+  const demo = demoVoiceFor(learner, (await store.listClasses()).find((c) => c.id === learner.classId))
+  const prompts = choosePrompts(demo ? demoPrompts(PROMPTS, demo.name) : PROMPTS, await store.attemptsForLearner(learner.id))
+  const recorder = demo ? new DemoVoice(demo.name) : new Recorder()
+  new Turn(root, store, learner, session, prompts, deps ?? { recorder, evaluate: (w, t) => evaluate(w, t) }, !!demo).render()
 }
 
 type State =
@@ -62,14 +66,16 @@ class Turn {
   private readonly session: Session
   private readonly prompts: Prompt[]
   private readonly deps: TurnDeps
+  private readonly demoVoice: boolean
 
-  constructor(root: HTMLElement, store: Store, learner: Learner, session: Session, prompts: Prompt[], deps: TurnDeps) {
+  constructor(root: HTMLElement, store: Store, learner: Learner, session: Session, prompts: Prompt[], deps: TurnDeps, demoVoice = false) {
     this.root = root
     this.store = store
     this.learner = learner
     this.session = session
     this.prompts = prompts
     this.deps = deps
+    this.demoVoice = demoVoice
     // Time the turn (TRA-812): it ends when the child leaves this screen.
     // "Not me", or leaving without recording anything, isn't a turn.
     const startedAt = Date.now()
@@ -94,6 +100,7 @@ class Turn {
       h('header', { class: 'topbar turn-bar' },
         avatarElement(this.learner.avatar, 'avatar big'),
         h('h1', {}, `Hi ${this.learner.name}!`),
+        this.demoVoice && h('span', { class: 'demo-badge', title: 'This child speaks with a simulated voice, not the microphone' }, 'Demo voice'),
         this.saved === 0 && h('a', { class: 'button ghost', href: '#/class' }, 'Not me'),
       ),
       h('main', { class: 'turn' },
@@ -148,7 +155,7 @@ class Turn {
       case 'recording':
         return h('div', { class: 'controls' },
           h('button', { class: 'mic recording', 'aria-label': 'Stop recording', on: { click: () => this.stopRecording() } }, stopIcon()),
-          h('p', { class: 'hint' }, 'Listening… tap when you’ve finished.'),
+          h('p', { class: 'hint' }, this.demoVoice ? 'Playing the demo voice…' : 'Listening… tap when you’ve finished.'),
         )
       case 'scoring':
         return h('div', { class: 'controls' }, h('div', { class: 'spinner', 'aria-hidden': 'true' }), h('p', { class: 'hint' }, 'Checking…'))
@@ -196,7 +203,7 @@ class Turn {
     this.player.stop() // so the microphone doesn't pick up the clip
     this.set({ step: 'starting' })
     try {
-      await withTimeout(this.deps.recorder.start(), MIC_LIMIT_MS, 'starting the microphone')
+      await withTimeout(this.deps.recorder.start(this.prompts[this.index].id, () => void this.stopRecording()), MIC_LIMIT_MS, 'starting the microphone')
     } catch (err) {
       const problem = describeError(err, navigator.onLine)
       logError('microphone', problem.kind, err)

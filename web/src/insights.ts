@@ -9,7 +9,7 @@
 //   sounds are ranked against the class's own average, not fixed pass marks.
 
 import { SOUNDS, soundForPhone, type Sound, type SoundId } from './sounds.ts'
-import type { Attempt, Learner } from './store.ts'
+import type { Attempt, Learner, Session } from './store.ts'
 
 // --- Turns (TRA-803) ---------------------------------------------------------
 
@@ -209,6 +209,16 @@ export function phoneScores(attempts: Attempt[]): Map<string, number[]> {
     }
   }
   return out
+}
+
+// Only attempts from sessions that have ended. Trends use these, so a lesson
+// in progress, where some children have had their turn and others haven't,
+// doesn't move anyone's trend until it's over. One short turn is a different
+// mix of sentences from the past ones, and CAPT's scores depend on the words
+// (TRA-813).
+export function finishedSessionsOnly(history: Attempt[], sessions: Session[]): Attempt[] {
+  const ended = new Set(sessions.filter((s) => s.endedAt).map((s) => s.id))
+  return history.filter((a) => ended.has(a.sessionId))
 }
 
 export function improvement(learner: Learner, history: Attempt[]): Improvement {

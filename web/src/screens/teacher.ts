@@ -5,7 +5,7 @@
 // Glanceable: no raw scores, except in the "All sounds" detail.
 
 import { avatarElement } from '../avatars.ts'
-import { childrenToHelp, classImprovement, classSoundDifficulties, soundsToWorkOn, turnsThisSession, type Improvement, type SoundDifficulty } from '../insights.ts'
+import { childrenToHelp, classImprovement, classSoundDifficulties, finishedSessionsOnly, soundsToWorkOn, turnsThisSession, type Improvement, type SoundDifficulty } from '../insights.ts'
 import { pickClass } from '../selected-class.ts'
 import type { Learner, Session, Store } from '../store.ts'
 import { formatDuration, sessionTiming, type SessionTiming } from '../timing.ts'
@@ -41,7 +41,7 @@ export async function renderTeacher(root: HTMLElement, store: Store): Promise<vo
         : [
             turnsPanel(learners, sessionAttempts.length ? turnsThisSession(learners, sessionAttempts) : undefined, shown, !!running, timing),
             soundsPanel(classSoundDifficulties(history, learners), history.length),
-            improvementPanel(classImprovement(learners, history)),
+            improvementPanel(classImprovement(learners, finishedSessionsOnly(history, sessions)), !!running),
           ],
     ),
   )
@@ -115,7 +115,7 @@ function soundsPanel(difficulties: SoundDifficulty[], attempts: number): HTMLEle
   )
 }
 
-function improvementPanel(all: Improvement[]): HTMLElement {
+function improvementPanel(all: Improvement[], running: boolean): HTMLElement {
   const improving = all.filter((i) => i.trend === 'improving')
   const support = all.filter((i) => i.trend === 'needs-support')
   const steady = all.filter((i) => i.trend === 'steady').length
@@ -131,7 +131,7 @@ function improvementPanel(all: Improvement[]): HTMLElement {
     )
   return h('section', { class: 'card panel' },
     h('h2', {}, 'Who is improving'),
-    h('p', { class: 'muted' }, 'Recent sessions compared with earlier ones'),
+    h('p', { class: 'muted' }, running ? 'Finished sessions, recent compared with earlier. Today’s counts once it ends.' : 'Recent sessions compared with earlier ones'),
     improving.length === 0 && support.length === 0
       ? h('p', {}, tooSoon === all.length ? 'Not enough practice yet. Trends appear after two sessions.' : 'No clear changes yet.')
       : [
