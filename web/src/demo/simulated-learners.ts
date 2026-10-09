@@ -63,13 +63,14 @@ export const LEARNERS: SimulatedLearner[] = [
   },
 ]
 
-// The sentences every simulated learner says: three for each planted
-// pattern, so each planted sound occurs at least twice per child.
+// The sentences every simulated learner says: each planted sound occurs in
+// at least two different sentences, since the teacher view only names a
+// child for a sound weak across sentences.
 export const TEST_PROMPTS = [
-  'think-three', 'this-mother', 'they-there',
+  'think-three', 'thin-thumb', 'this-mother', 'they-there',
   'very-good', 'seven-vans', 'five-fish',
   'red-rabbit', 'little-lamp', 'lorry-yellow',
-  'she-shoes', 'sheep-ship', 'children-chairs',
+  'she-shoes', 'sheep-ship', 'children-chairs', 'chicken-lunch',
 ]
 
 // The sentence as this learner says it.

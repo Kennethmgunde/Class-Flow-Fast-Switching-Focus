@@ -97,7 +97,7 @@ function errorLog(): HTMLElement {
   return section
 }
 
-// Loads a class of 30 with two weeks of simulated practice, for demos.
+// Loads a class of 30 with three weeks of simulated practice, for demos.
 function demoControls(store: Store): HTMLElement {
   const status = h('p', { class: 'muted' })
   const run = (label: string, work: () => Promise<string>) => async (e: Event) => {
@@ -114,7 +114,7 @@ function demoControls(store: Store): HTMLElement {
   }
   return h('section', { class: 'card' },
     h('h2', {}, 'Demo class'),
-    h('p', {}, `“${DEMO_CLASS_NAME}”: 30 children and two weeks of simulated practice, with today’s session open and empty. Includes the five simulated learners and their planted errors.`),
+    h('p', {}, `“${DEMO_CLASS_NAME}”: 30 children and three weeks of simulated practice, with today’s session open and empty. Includes the five simulated learners and their planted errors.`),
     h('div', { class: 'row' },
       h('button', {
         class: 'primary',

@@ -6,6 +6,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { encodeWav, wavProblem } from '../src/audio/wav.ts'
 import { CaptError, evaluate } from '../src/capt.ts'
 import { describeError } from '../src/problems.ts'
+import { LEARNERS, TEST_PROMPTS } from '../src/demo/simulated-learners.ts'
 
 const speech = (seconds: number, rate = 16000) =>
   encodeWav(Float32Array.from({ length: Math.round(rate * seconds) }, (_, i) => 0.3 * Math.sin(i / 8)), rate)
@@ -57,5 +58,5 @@ test('every generated test clip would be accepted', { skip: !existsSync(new URL(
       count++
     }
   }
-  assert.equal(count, 60)
+  assert.equal(count, LEARNERS.length * TEST_PROMPTS.length)
 })
