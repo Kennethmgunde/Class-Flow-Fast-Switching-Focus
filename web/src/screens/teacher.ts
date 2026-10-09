@@ -8,6 +8,7 @@ import { avatarElement } from '../avatars.ts'
 import { childrenToHelp, classImprovement, classSoundDifficulties, soundsToWorkOn, turnsThisSession, type Improvement, type SoundDifficulty } from '../insights.ts'
 import { pickClass } from '../selected-class.ts'
 import type { Learner, Session, Store } from '../store.ts'
+import { formatDuration, sessionTiming, type SessionTiming } from '../timing.ts'
 import { h } from '../ui/dom.ts'
 
 const TOP_SOUNDS = 3
@@ -24,6 +25,7 @@ export async function renderTeacher(root: HTMLElement, store: Store): Promise<vo
   const shown = running ?? sessions.at(-1) // the running session, or the last one
   const history = await store.attemptsForClass(current.id)
   const sessionAttempts = shown ? history.filter((a) => a.sessionId === shown.id) : []
+  const timing = shown ? sessionTiming(await store.turnsForSession(shown.id)) : undefined
 
   root.replaceChildren(
     h('header', { class: 'topbar' },
@@ -37,7 +39,7 @@ export async function renderTeacher(root: HTMLElement, store: Store): Promise<vo
       learners.length === 0
         ? h('section', { class: 'card' }, h('p', {}, 'No learners yet. ', h('a', { href: '#/setup' }, 'Add your class in Setup.')))
         : [
-            turnsPanel(learners, sessionAttempts.length ? turnsThisSession(learners, sessionAttempts) : undefined, shown, !!running),
+            turnsPanel(learners, sessionAttempts.length ? turnsThisSession(learners, sessionAttempts) : undefined, shown, !!running, timing),
             soundsPanel(classSoundDifficulties(history, learners), history.length),
             improvementPanel(classImprovement(learners, history)),
           ],
@@ -45,7 +47,7 @@ export async function renderTeacher(root: HTMLElement, store: Store): Promise<vo
   )
 }
 
-function turnsPanel(learners: Learner[], turns: ReturnType<typeof turnsThisSession> | undefined, session: Session | undefined, running: boolean): HTMLElement {
+function turnsPanel(learners: Learner[], turns: ReturnType<typeof turnsThisSession> | undefined, session: Session | undefined, running: boolean, timing?: SessionTiming): HTMLElement {
   const waiting = turns?.waiting ?? learners
   const done = learners.length - waiting.length
   const when = !session ? 'No practice session yet' : running ? `This session, since ${time(session.startedAt)}` : `Last session, ${day(session.startedAt)}`
@@ -55,6 +57,13 @@ function turnsPanel(learners: Learner[], turns: ReturnType<typeof turnsThisSessi
     h('p', { class: 'big-number' }, `${done} of ${learners.length}`, h('span', { class: 'muted' }, ' had a turn')),
     h('div', { class: 'meter', role: 'img', 'aria-label': `${done} of ${learners.length} had a turn` },
       h('span', { style: `width: ${learners.length ? (100 * done) / learners.length : 0}%` }),
+    ),
+    timing && h('div', { class: 'timing' },
+      h('p', {}, h('strong', {}, `${timing.turns} ${timing.turns === 1 ? 'turn' : 'turns'} in ${formatDuration(timing.totalMs)}`)),
+      h('p', { class: 'muted' },
+        `About ${formatDuration(timing.averageTurnMs)} per turn`,
+        timing.averageSwitchMs !== undefined ? ` · ${formatDuration(timing.averageSwitchMs)} to switch` : '',
+      ),
     ),
     waiting.length === 0
       ? h('p', { class: 'all-done' }, 'Everyone has had a turn.')

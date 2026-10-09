@@ -70,6 +70,15 @@ class Turn {
     this.session = session
     this.prompts = prompts
     this.deps = deps
+    // Time the turn (TRA-812): it ends when the child leaves this screen.
+    // "Not me", or leaving without recording anything, isn't a turn.
+    const startedAt = Date.now()
+    window.addEventListener('hashchange', () => {
+      if (this.saved === 0) return
+      void this.store
+        .addTurn({ learnerId: learner.id, sessionId: session.id, startedAt, endedAt: Date.now(), attempts: this.saved })
+        .catch((err) => logError('timing', 'turn-not-saved', err))
+    }, { once: true })
   }
 
   render(): void {
