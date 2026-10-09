@@ -48,7 +48,7 @@ The browser can't call CAPT directly, because the demo server sends no CORS head
 | `web/`    | The tablet web app: roster, practice flow, teacher view      |
 | `server/` | CAPT proxy (REST `/evaluate` and WebSocket `/streaming-evaluate`) |
 | `tools/`  | VoiceGen speech synthesis (`voicegen.ts`), prompt clips (`make-prompt-audio.ts`), the simulated learners' audio (`make-test-audio.ts`), the answer-key check (`check-answer-key.ts`), prompt and live CAPT checks |
-| `docs/`   | [Demo script](docs/demo-script.md), [demo run](docs/demo-run.md) with timings, [answer-key check](docs/answer-key-check.md) |
+| `docs/`   | [Demo script](docs/demo-script.md), [demo run](docs/demo-run.md) with timings, [answer-key check](docs/answer-key-check.md), [sales one-pager](docs/sales-one-pager.md) |
 
 ## Stack
 
