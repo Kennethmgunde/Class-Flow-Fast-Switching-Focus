@@ -4,16 +4,20 @@ import type { ClassRoom, Learner, Session, Store } from '../store.ts'
 import { AVATARS, MAX_LEARNERS, checkClassName, checkLearner, nextAvatar } from '../setup-rules.ts'
 import { avatarElement } from '../avatars.ts'
 import { readSelectedClass as readSaved, saveSelectedClass as save } from '../selected-class.ts'
+import { clearErrors } from '../error-log.ts'
+import { PIN_LENGTH, isValidPin, type TeacherLock } from '../teacher-lock.ts'
 import { h } from '../ui/dom.ts'
 
-export async function renderSetup(root: HTMLElement, store: Store): Promise<void> {
-  const ui = new SetupScreen(root, store)
+export async function renderSetup(root: HTMLElement, store: Store, lock: TeacherLock): Promise<void> {
+  const ui = new SetupScreen(root, store, lock)
   await ui.refresh()
 }
 
 class SetupScreen {
   private readonly root: HTMLElement
   private readonly store: Store
+  private readonly lock: TeacherLock
+  private changingPin = false
   private classes: ClassRoom[] = []
   private current?: ClassRoom
   private learners: Learner[] = []
@@ -21,11 +25,13 @@ class SetupScreen {
   private turns = 0
   private avatar?: string
   private creatingClass = false
-  private confirming?: string // learner id, or 'class', awaiting a delete confirmation
+  private confirming?: string // learner id, 'class' or 'wipe', awaiting a delete confirmation
+  private wipeSummary = '' // what a wipe would delete, shown in its confirmation
 
-  constructor(root: HTMLElement, store: Store) {
+  constructor(root: HTMLElement, store: Store, lock: TeacherLock) {
     this.root = root
     this.store = store
+    this.lock = lock
   }
 
   async refresh(focusName = false): Promise<void> {
@@ -56,7 +62,9 @@ class SetupScreen {
       ),
       h('main', { class: 'setup' },
         showClassForm ? this.classForm() : null,
-        this.current && !this.creatingClass ? [this.sessionBar(), this.learnerSection(), this.dangerZone()] : null,
+        this.current && !this.creatingClass
+          ? [this.sessionBar(), this.learnerSection(), this.pinSection(), this.privacySection(), this.dangerZone()]
+          : null,
       ),
     )
   }
@@ -220,9 +228,104 @@ class SetupScreen {
     )
   }
 
+  // TRA-807: a PIN keeps children out of setup, the teacher view and checks.
+  private pinSection(): HTMLElement {
+    const hasPin = this.lock.hasPin()
+    if (hasPin && !this.changingPin) {
+      return h('section', { class: 'card' },
+        h('h2', {}, 'Teacher PIN'),
+        h('p', {}, 'On. Children need the PIN to open setup or the teacher view. Going to the class view locks them again.'),
+        h('div', { class: 'row' },
+          h('button', { class: 'secondary', on: { click: () => { this.changingPin = true; this.render() } } }, 'Change PIN'),
+          h('button', { class: 'ghost', on: { click: () => { this.lock.removePin(); this.render() } } }, 'Remove PIN'),
+        ),
+      )
+    }
+    const error = h('p', { class: 'error', role: 'alert' })
+    const pinInput = (id: string, label: string) =>
+      h('input', { id, type: 'password', inputMode: 'numeric', autocomplete: 'off', maxLength: PIN_LENGTH, placeholder: label, 'aria-label': label })
+    const first = pinInput('pin-1', `${PIN_LENGTH}-digit PIN`)
+    const again = pinInput('pin-2', 'Type it again')
+    return h('form', {
+      class: 'card',
+      on: {
+        submit: (e) => {
+          e.preventDefault()
+          if (!isValidPin(first.value)) return void (error.textContent = `Use ${PIN_LENGTH} digits.`)
+          if (first.value !== again.value) return void (error.textContent = 'The two PINs don’t match.')
+          this.lock.setPin(first.value)
+          this.changingPin = false
+          this.render()
+        },
+      },
+    },
+      h('h2', {}, hasPin ? 'Change the teacher PIN' : 'Teacher PIN'),
+      h('p', {}, hasPin ? 'Choose a new PIN.' : 'Set a PIN so children can’t open setup or the teacher view.'),
+      h('div', { class: 'row' },
+        first,
+        again,
+        h('button', { type: 'submit', class: 'primary' }, 'Save PIN'),
+        hasPin && h('button', { type: 'button', class: 'ghost', on: { click: () => { this.changingPin = false; this.render() } } }, 'Cancel'),
+      ),
+      error,
+    )
+  }
+
+  // TRA-808: what's kept, where, and how to remove it.
+  private privacySection(): HTMLElement {
+    return h('section', { class: 'card privacy' },
+      h('h2', {}, 'What’s stored on this tablet'),
+      h('ul', {},
+        h('li', {}, 'Each child’s first name and picture. No surnames or other details.'),
+        h('li', {}, 'Each attempt’s sentence, time and pronunciation scores.'),
+        h('li', {}, 'Recordings are not kept. Each one is sent to Cobalt CAPT for scoring, without the child’s name, then discarded.'),
+        h('li', {}, 'Everything stays in this browser on this tablet: no accounts, no copies elsewhere.'),
+      ),
+      h('p', { class: 'muted' }, 'Removing a learner or deleting a class also deletes their progress. To clear the tablet completely, use “Wipe everything” below. Nothing is copied anywhere else, so deleted data can’t be brought back.'),
+    )
+  }
+
   private dangerZone(): HTMLElement {
     const c = this.current!
+    if (this.confirming === 'wipe') {
+      // Typing WIPE makes this a deliberate act, not a stray tap.
+      const typed = h('input', { id: 'wipe-confirm', autocomplete: 'off', placeholder: 'Type WIPE', 'aria-label': 'Type WIPE to confirm' })
+      const wipe = h('button', {
+        class: 'danger',
+        disabled: true,
+        on: {
+          click: () => this.act(async () => {
+            await this.store.wipeEverything()
+            this.lock.removePin()
+            clearErrors()
+            save(undefined)
+            this.current = undefined
+          }),
+        },
+      }, 'Wipe everything')
+      typed.addEventListener('input', () => { wipe.disabled = typed.value.trim().toUpperCase() !== 'WIPE' })
+      return h('section', { class: 'card wipe-confirm' },
+        h('h2', {}, 'Wipe everything on this tablet?'),
+        h('p', {}, h('strong', {}, `This deletes ${this.wipeSummary}`), ', and the teacher PIN. It can’t be undone: no copy is kept anywhere.'),
+        h('div', { class: 'row' },
+          typed,
+          wipe,
+          h('button', { class: 'ghost', on: { click: () => { this.confirming = undefined; this.render() } } }, 'Cancel'),
+        ),
+      )
+    }
     return h('section', { class: 'danger-zone' },
+      this.confirming !== 'class' &&
+        h('button', {
+          class: 'ghost danger-text',
+          on: {
+            click: async () => {
+              this.wipeSummary = describeCounts(await this.store.counts())
+              this.confirming = 'wipe'
+              this.render()
+            },
+          },
+        }, 'Wipe everything on this tablet…'),
       this.confirming === 'class'
         ? h('div', { class: 'row' },
             h('p', {}, `Delete ${c.name}, its ${this.learners.length} learners and all their progress? This can’t be undone.`),
@@ -248,6 +351,11 @@ class SetupScreen {
     this.confirming = undefined
     await this.refresh()
   }
+}
+
+function describeCounts(c: { classes: number; learners: number; sessions: number; attempts: number }): string {
+  const n = (count: number, one: string, many: string) => `${count} ${count === 1 ? one : many}`
+  return [n(c.classes, 'class', 'classes'), n(c.learners, 'learner', 'learners'), n(c.sessions, 'session', 'sessions'), n(c.attempts, 'score', 'scores')].join(', ')
 }
 
 function time(ms: number): string {

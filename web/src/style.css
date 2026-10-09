@@ -205,7 +205,7 @@ label { display: block; font-weight: 600; margin-bottom: 0.35rem; }
 .avatar-choice.selected { border-color: var(--accent); }
 .avatar-choice:disabled { opacity: 0.2; }
 
-.danger-zone { display: flex; justify-content: flex-end; }
+.danger-zone { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.5rem; }
 .danger-zone .row { justify-content: flex-end; }
 .danger-zone p { flex: 1 1 18rem; }
 
@@ -449,3 +449,27 @@ label { display: block; font-weight: 600; margin-bottom: 0.35rem; }
 .one-to-one { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
 .one-to-one li { display: flex; align-items: center; gap: 0.6rem; }
 .one-to-one p { margin: 0; font-size: 0.9rem; }
+
+/* PIN pad */
+
+.pin-screen { max-width: 22rem; margin: 8vh auto 2rem; padding: 0 1rem; display: grid; justify-items: center; gap: 0.9rem; text-align: center; }
+.pin-message { min-height: 1.5em; color: var(--muted); }
+.pin-message.wrong { color: var(--danger); }
+.pin-dots { display: flex; gap: 0.9rem; }
+.pin-dots span { width: 1rem; height: 1rem; border-radius: 50%; border: 2px solid var(--accent); }
+.pin-dots span.filled { background: var(--accent); }
+.pin-pad { display: grid; grid-template-columns: repeat(3, 5rem); gap: 0.75rem; }
+.pin-key { height: 5rem; border-radius: 50%; font-size: 1.6rem; background: var(--surface); border: 1px solid var(--line); color: var(--ink); }
+a.pin-key { font-size: 1rem; border-radius: 50%; }
+button.link { background: none; border: none; color: var(--muted); text-decoration: underline; min-height: var(--touch); }
+.forgot { font-size: 0.85rem; user-select: none; touch-action: none; }
+.forgot.holding { color: var(--danger); }
+
+.privacy ul { margin: 0.25rem 0 0.5rem; padding-left: 1.2rem; }
+.privacy li { margin-bottom: 0.25rem; }
+#pin-1, #pin-2 { flex: 0 1 11rem; }
+#pin-1:not(:placeholder-shown), #pin-2:not(:placeholder-shown) { letter-spacing: 0.3em; }
+
+.wipe-confirm { border-color: var(--danger); background: var(--danger-soft); }
+.wipe-confirm h2 { color: var(--danger); }
+#wipe-confirm { flex: 0 1 10rem; text-transform: uppercase; }

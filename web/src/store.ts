@@ -32,6 +32,8 @@ export type Attempt = {
 
 export type NewAttempt = Omit<Attempt, 'id' | 'classId' | 'at'> & { at?: number }
 
+const ALL_STORES = ['classes', 'learners', 'sessions', 'attempts'] as const
+
 const DB_NAME = 'class-flow'
 const DB_VERSION = 1
 
@@ -80,6 +82,18 @@ export class Store {
       tx.objectStore('classes').delete(classId)
       for (const store of ['learners', 'sessions', 'attempts']) deleteWhere(tx.objectStore(store).index('classId'), classId)
     })
+  }
+
+  // Deletes every class, learner, session and attempt on this tablet.
+  async wipeEverything(): Promise<void> {
+    await this.write(ALL_STORES, (tx) => ALL_STORES.forEach((s) => tx.objectStore(s).clear()))
+  }
+
+  // How much is stored, shown before a wipe.
+  async counts(): Promise<{ classes: number; learners: number; sessions: number; attempts: number }> {
+    const tx = this.db.transaction(ALL_STORES)
+    const [classes, learners, sessions, attempts] = await Promise.all(ALL_STORES.map((n) => done(tx.objectStore(n).count())))
+    return { classes, learners, sessions, attempts }
   }
 
   // Learners
@@ -179,7 +193,7 @@ export class Store {
   }
 
   // Runs `fn` in one read-write transaction and waits for it to commit.
-  private write(stores: string[], fn: (tx: IDBTransaction) => void): Promise<void> {
+  private write(stores: readonly string[], fn: (tx: IDBTransaction) => void): Promise<void> {
     return new Promise((resolve, reject) => {
       const tx = this.db.transaction(stores, 'readwrite')
       tx.oncomplete = () => resolve()
