@@ -271,6 +271,14 @@ label { display: block; font-weight: 600; margin-bottom: 0.35rem; }
 /* One child's turn */
 
 .turn-bar h1 { margin: 0 auto 0 0; font-size: 1.6rem; }
+.demo-badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
 .turn {
   display: grid;
   gap: 1rem;

@@ -16,6 +16,8 @@ bin/
 *.m4a
 # ...except the prompt clips, which ship with the app (tools/make-prompt-audio.ts)
 !web/public/prompts/*.wav
+# ...and the simulated learners' voices for demo mode (tools/make-test-audio.ts)
+!web/public/demo-voices/*/*.wav
 data/generated/
 
 # Editor and OS

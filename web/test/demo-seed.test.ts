@@ -4,7 +4,7 @@ import 'fake-indexeddb/auto'
 import { IDBFactory } from 'fake-indexeddb'
 import { Store } from '../src/store.ts'
 import { DEMO_CLASS_NAME, removeDemoClasses, seedDemoClass } from '../src/demo/seed.ts'
-import { childrenToHelp, classImprovement, classSoundDifficulties, soundsToWorkOn } from '../src/insights.ts'
+import { childrenToHelp, classImprovement, classSoundDifficulties, finishedSessionsOnly, soundsToWorkOn } from '../src/insights.ts'
 
 const NOW = new Date('2026-10-14T09:00:00').getTime()
 
@@ -33,10 +33,10 @@ test('the teacher view finds every planted error, and only those', async () => {
   const difficulties = classSoundDifficulties(history, learners)
   const help = childrenToHelp(difficulties, soundsToWorkOn(difficulties))
   // Every child the teacher view points at, with their sounds.
-  const flagged = Object.fromEntries([
-    ...soundsToWorkOn(difficulties).flatMap((d) => d.learners.map((l) => [l.name, [d.sound.id]] as const)),
-    ...help.map((c) => [c.learner.name, c.sounds.map((s) => s.id)] as const),
-  ].map(([name, sounds]) => [name, [...sounds].sort()]))
+  const flagged: Record<string, string[]> = {}
+  const add = (name: string, sound: string) => { flagged[name] = [...new Set([...(flagged[name] ?? []), sound])].sort() }
+  for (const d of soundsToWorkOn(difficulties)) for (const l of d.learners) add(l.name, d.sound.id)
+  for (const c of help) for (const s of c.sounds) add(c.learner.name, s.id)
   assert.deepEqual(flagged, {
     Amara: ['th-think', 'th-this'],
     Chidi: ['v'],
@@ -53,6 +53,28 @@ test('Tunde and Achieng are improving, Musa may need support, everyone else is s
   assert.deepEqual(by('improving'), ['Achieng', 'Tunde'])
   assert.deepEqual(by('needs-support'), ['Musa'])
   assert.equal(by('steady').length, 27)
+  store.close()
+})
+
+test('live turns during the demo don’t move anyone’s trend until the session ends', async () => {
+  const { store, classRoom, learners } = await demo()
+  const trends = async () => {
+    const all = await store.attemptsForClass(classRoom.id)
+    return classImprovement(learners, finishedSessionsOnly(all, await store.listSessions(classRoom.id))).map((i) => [i.learner.name, i.trend])
+  }
+  const before = await trends()
+  // Amara has a perfect turn today, far above her history.
+  const amara = learners.find((l) => l.name === 'Amara')!
+  const today = (await store.currentSession(classRoom.id))!
+  const past = (await store.attemptsForLearner(amara.id)).slice(0, 3)
+  for (const a of past) {
+    const words = a.evaluation.words.map((w) => ({ ...w, sounds: w.sounds.map((s) => ({ ...s, score: 1 })) }))
+    await store.addAttempt({ learnerId: amara.id, sessionId: today.id, promptId: a.promptId, referenceText: a.referenceText, evaluation: { score: 1, words } })
+  }
+  assert.deepEqual(await trends(), before)
+  // Once the session ends, it counts.
+  await store.endSession(today.id, NOW + 3_600_000)
+  assert.notDeepEqual(await trends(), before)
   store.close()
 })
 
