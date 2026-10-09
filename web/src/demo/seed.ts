@@ -1,4 +1,4 @@
-// A demo class with two weeks of practice history (TRA-810), so the teacher
+// A demo class with three weeks of practice history (TRA-810), so the teacher
 // view has something real to show in a five-minute demo: sounds to work on,
 // who is improving, who may need support.
 //
@@ -28,8 +28,11 @@ const NAMES = [
   'Imani', 'Emeka', 'Fatima', 'Kamau', 'Adaeze', 'Otieno', 'Halima', 'Juma', 'Chiamaka', 'Kiprop',
   'Nkechi', 'Ibrahim', 'Akinyi', 'Segun', 'Wairimu', 'Yusuf', 'Ifeoma', 'Mwangi', 'Aisha', 'Obinna',
 ]
-const IMPROVING: Record<string, number> = { Tunde: 0.045, Achieng: 0.04, Musa: -0.045 } // change per session
-const PAST_SESSIONS_DAYS_AGO = [13, 10, 6, 3]
+// Change per session, spread over the whole history.
+const IMPROVING: Record<string, number> = { Tunde: 0.02, Achieng: 0.018, Musa: -0.02 }
+// Three weeks, about every other school day: enough sessions for the app's
+// rotation to cover every sentence, so each sound shows up in several.
+const PAST_SESSIONS_DAYS_AGO = [22, 20, 17, 15, 13, 10, 8, 6, 3, 1]
 const ATTENDANCE = 0.9
 const DAY = 86_400_000
 
@@ -42,10 +45,10 @@ export type DemoOptions = {
 export async function seedDemoClass(store: Store, opts: DemoOptions = {}): Promise<{ classRoom: ClassRoom; learners: Learner[] }> {
   const now = opts.now ?? Date.now()
   const random = seededRandom(opts.seed ?? 2026)
-  const classRoom = await store.addClass(DEMO_CLASS_NAME, now - 14 * DAY)
+  const classRoom = await store.addClass(DEMO_CLASS_NAME, now - 24 * DAY)
   const learners: Learner[] = []
   for (const [i, name] of NAMES.entries()) {
-    learners.push(await store.addLearner(classRoom.id, name, AVATARS[(i * 7) % AVATARS.length], now - 14 * DAY))
+    learners.push(await store.addLearner(classRoom.id, name, AVATARS[(i * 7) % AVATARS.length], now - 24 * DAY))
   }
 
   // Each child's level: around 0.85, with a little spread between children.

@@ -15,16 +15,16 @@ async function demo() {
   return { store, classRoom, learners, history }
 }
 
-test('the demo class has 30 children, four past sessions and an empty session today', async () => {
+test('the demo class has 30 children, ten past sessions and an empty session today', async () => {
   const { store, classRoom, learners, history } = await demo()
   assert.equal(learners.length, 30)
   const sessions = await store.listSessions(classRoom.id)
-  assert.equal(sessions.length, 5)
-  assert.ok(sessions.slice(0, 4).every((s) => s.endedAt))
+  assert.equal(sessions.length, 11)
+  assert.ok(sessions.slice(0, 10).every((s) => s.endedAt))
   const today = await store.currentSession(classRoom.id)
   assert.equal(today?.startedAt, NOW)
   assert.equal((await store.attemptsForSession(today!.id)).length, 0)
-  assert.ok(history.length > 300 && history.every((a) => a.at < NOW))
+  assert.ok(history.length > 800 && history.every((a) => a.at < NOW))
   store.close()
 })
 

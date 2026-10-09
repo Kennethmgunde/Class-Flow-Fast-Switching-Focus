@@ -43,6 +43,11 @@ const MIN_CLASS_OCCURRENCES = 4
 const MIN_LEARNER_OCCURRENCES = 2
 // Gaps are relative, "this share below the average", so an accent that
 // lowers every score by the same factor changes nothing.
+// A child is named, or a sound marked hard for the class, only if it's weak
+// in at least this many different sentences: one bad recording, one hard
+// sentence, or one mispronounced word dragging down its neighbours isn't a
+// pattern. (Found checking against the answer key, TRA-811.)
+const MIN_WEAK_SENTENCES = 2
 // A sound is "hard" for the class when its average sits 10% below the
 // class's average over all target sounds.
 const HARD_GAP = 0.1
@@ -63,7 +68,8 @@ export type SoundDifficulty = {
   learners: Learner[] // children who find this sound hard, weakest first
 }
 
-type Occurrence = { learnerId: string; sound: SoundId; score: number }
+// `sentence` tells repeats of the same sentence apart from different ones.
+type Occurrence = { learnerId: string; sound: SoundId; score: number; sentence: string }
 
 // Every target-sound score in the attempts. Other phones, and the empty
 // "words" CAPT returns for pauses, are ignored.
@@ -74,7 +80,7 @@ export function soundOccurrences(attempts: Attempt[]): Occurrence[] {
       if (!w.text.trim()) continue
       for (const s of w.sounds) {
         const sound = soundForPhone(s.reference)
-        if (sound) out.push({ learnerId: a.learnerId, sound: sound.id, score: s.kind === 'deletion' ? 0 : s.score })
+        if (sound) out.push({ learnerId: a.learnerId, sound: sound.id, score: s.kind === 'deletion' ? 0 : s.score, sentence: a.promptId ?? a.referenceText })
       }
     }
   }
@@ -96,21 +102,27 @@ export function classSoundDifficulties(attempts: Attempt[], learners: Learner[])
 
     const strugglers: { learner: Learner; gap: number }[] = []
     for (const l of learners) {
-      const mine = these.filter((o) => o.learnerId === l.id).map((o) => o.score)
+      const mine = these.filter((o) => o.learnerId === l.id)
       if (mine.length < MIN_LEARNER_OCCURRENCES) continue
-      const gap = relativeGap(average, mean(mine))
-      if (gap >= LEARNER_GAP) strugglers.push({ learner: l, gap })
+      const gap = relativeGap(average, mean(mine.map((o) => o.score)))
+      const weakSentences = new Set(mine.filter((o) => relativeGap(average, o.score) >= LEARNER_GAP).map((o) => o.sentence))
+      if (gap >= LEARNER_GAP && weakSentences.size >= MIN_WEAK_SENTENCES) strugglers.push({ learner: l, gap })
     }
     strugglers.sort((a, b) => b.gap - a.gap)
 
     const gap = relativeGap(classAverage, average)
+    // Same rule as for children: hard for the class only if it's weak in at
+    // least two different sentences, so one hard sentence isn't a pattern.
+    const bySentence = new Map<string, number[]>()
+    for (const o of these) bySentence.set(o.sentence, [...(bySentence.get(o.sentence) ?? []), o.score])
+    const weakClassSentences = [...bySentence.values()].filter((xs) => relativeGap(classAverage, mean(xs)) >= HARD_GAP).length
     result.push({
       sound,
       occurrences: these.length,
       average,
       gap,
       weakShare,
-      hard: gap >= HARD_GAP,
+      hard: gap >= HARD_GAP && weakClassSentences >= MIN_WEAK_SENTENCES,
       learners: strugglers.map((s) => s.learner),
     })
   }

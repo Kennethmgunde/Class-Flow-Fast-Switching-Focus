@@ -18,7 +18,7 @@ function attempt(who: Learner, sessionId: string, phones: Record<string, number>
       sounds: Object.entries(phones).map(([reference, score]) => ({ reference, score, kind: 'match' as const, heard: [] })),
     }],
   }
-  return { id: String(at), learnerId: who.id, classId: 'c', sessionId, referenceText: 'x', at, evaluation }
+  return { id: String(at), learnerId: who.id, classId: 'c', sessionId, referenceText: `sentence ${at}`, at, evaluation }
 }
 
 // --- Turns ---
@@ -82,6 +82,17 @@ test("a single bad score doesn't name a child", () => {
   ])
   const th = classSoundDifficulties(data, everyone).find((d) => d.sound.id === 'th-think')!
   assert.deepEqual(th.learners, [])
+})
+
+test('one hard sentence is not a whole-class sound', () => {
+  // Everyone stumbles on th in the same one sentence, and says it fine elsewhere.
+  const data = everyone.flatMap((who) => [
+    { ...attempt(who, 's', { T: 0.3, S: 0.9, v: 0.9 }), promptId: 'hard-one' },
+    { ...attempt(who, 's', { T: 0.9, S: 0.9, v: 0.9 }), promptId: 'easy-one' },
+    { ...attempt(who, 's', { T: 0.9, S: 0.9, v: 0.9 }), promptId: 'easy-two' },
+  ])
+  const th = classSoundDifficulties(data, everyone).find((d) => d.sound.id === 'th-think')!
+  assert.equal(th.hard, false)
 })
 
 test('pause words and missed sounds are handled', () => {

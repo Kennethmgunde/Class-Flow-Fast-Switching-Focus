@@ -47,6 +47,17 @@ test('every changed word contains one of the learner’s planted sounds', () => 
   }
 })
 
+test('each planted sound is changed in at least two different test sentences', () => {
+  for (const learner of LEARNERS) {
+    for (const sound of learner.planted) {
+      const code = soundById(sound).xsampa
+      const sentences = TEST_PROMPTS.filter((id) =>
+        wordsWithPhones(id).some(({ word, phones: ps }) => ps.includes(code) && sayAs(learner, word) !== word))
+      assert.ok(sentences.length >= 2, `${learner.name}: ${sound} only in ${sentences.join(', ')}`)
+    }
+  }
+})
+
 test('each planted sound is changed at least twice in the test sentences', () => {
   for (const learner of LEARNERS) {
     for (const sound of learner.planted) {

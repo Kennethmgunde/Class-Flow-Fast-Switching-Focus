@@ -71,7 +71,7 @@ It synthesizes speech with VoiceGen, checks REST, WebSocket, a planted error and
 
 ### Demo class
 
-Open `#/check` and press **Load demo class**: 30 children with two weeks of simulated practice and today's session open and empty, so the teacher view has real content. It includes the five simulated learners and their planted errors (Amara th, Chidi v, Wanjiru r, Kofi sh and ch; Zuri none), plus Tunde and Achieng improving and Musa slipping. **Remove demo class** deletes it. Loading it again gives an identical class.
+Open `#/check` and press **Load demo class**: 30 children with three weeks of simulated practice and today's session open and empty, so the teacher view has real content. It includes the five simulated learners and their planted errors (Amara th, Chidi v, Wanjiru r, Kofi sh and ch; Zuri none), plus Tunde and Achieng improving and Musa slipping. **Remove demo class** deletes it. Loading it again gives an identical class.
 
 ### Turn timing
 

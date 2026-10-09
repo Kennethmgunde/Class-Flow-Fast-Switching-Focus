@@ -2,7 +2,8 @@
 // their planted errors (TRA-809). Output goes to data/generated/learners/,
 // which git ignores; rerun this to recreate it.
 //
-//   node tools/make-test-audio.ts
+//   node tools/make-test-audio.ts         # only clips that are missing
+//   node tools/make-test-audio.ts --all   # every clip again
 //
 // One VoiceGen request per clip (5 learners × 12 sentences = 60), one at a
 // time. Clips are 16 kHz mono 16-bit WAV, ready for CAPT.
@@ -11,7 +12,7 @@
 // sentence they were asked to say, what they actually said, and the planted
 // sounds. That's the answer key for TRA-811.
 
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { PROMPTS } from '../web/src/prompts.ts'
 import { LEARNERS, TEST_PROMPTS, sayAs } from '../web/src/demo/simulated-learners.ts'
 import { synthesizeForCapt } from './voicegen.ts'
@@ -34,10 +35,11 @@ for (const learner of LEARNERS) {
     const prompt = PROMPTS.find((p) => p.id === promptId)
     if (!prompt) throw new Error(`unknown prompt ${promptId}`)
     const said = sayAs(learner, prompt.text)
-    const wav = await synthesizeForCapt(said, { speaker: learner.speaker, speechRate: learner.speechRate, variation: 0.35 })
     const file = `${learner.name}/${promptId}.wav`
-    writeFileSync(new URL(file, OUT), wav)
     manifest.push({ learner: learner.name, promptId, reference: prompt.text, said, planted: learner.planted, file })
+    if (existsSync(new URL(file, OUT)) && !process.argv.includes('--all')) continue
+    const wav = await synthesizeForCapt(said, { speaker: learner.speaker, speechRate: learner.speechRate, variation: 0.35 })
+    writeFileSync(new URL(file, OUT), wav)
     console.log(`${learner.name.padEnd(8)} ${promptId.padEnd(16)} "${said}"`)
     await new Promise((r) => setTimeout(r, 300))
   }
