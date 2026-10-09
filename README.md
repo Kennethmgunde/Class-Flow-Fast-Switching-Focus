@@ -8,9 +8,29 @@ The teacher view shows the three things a teacher would act on:
 
 1. **Which sounds the class struggles with**, aggregated from CAPT's per-sound scores.
 2. **Who hasn't had a turn** this session.
-3. **Who is improving**, based on each child's score trend.
+3. **Who is improving**, comparing each child's recent finished sessions with earlier ones, sound by sound.
 
 This is quest **F-9** from CoW 26.3. The goal is to show five learners going through one device in five minutes, then the teacher view.
+
+## Results
+
+- **Five learners in 1 min 26 s**, about 16 s per turn and 1.3 s to switch to the next child, scored by the real CAPT ([demo run](docs/demo-run.md)).
+- **6 of 6 planted pronunciation errors found** by the teacher view, with no child named who shouldn't be, and 2 false alarms (knock-on effects in one child's mispronounced words) ([answer-key check](docs/answer-key-check.md)).
+- **Children's data never leaves the tablet**: no accounts, no cloud copies, no exports.
+
+![Teacher view after five turns](docs/images/demo-teacher-view.png)
+
+## Quick start: run the demo
+
+You need [Go](https://go.dev/dl/) 1.27 or later, [Node.js](https://nodejs.org) 24 or later, and an internet connection (scoring uses CAPT on demo.cobaltspeech.com).
+
+```sh
+git clone https://github.com/Kennethmgunde/Class-Flow-Fast-Switching-Focus.git class-flow
+cd class-flow/web && npm install && npm run build
+cd ../server && go run .
+```
+
+Then open http://localhost:8080/#/check, press **Load demo class**, tick **Demo voices**, and follow the [demo script](docs/demo-script.md): what to tap, what to say, and what to do if something goes wrong.
 
 ## Architecture
 
@@ -27,12 +47,12 @@ The browser can't call CAPT directly, because the demo server sends no CORS head
 |-----------|--------------------------------------------------------------|
 | `web/`    | The tablet web app: roster, practice flow, teacher view      |
 | `server/` | CAPT proxy (REST `/evaluate` and WebSocket `/streaming-evaluate`) |
-| `tools/`  | VoiceGen speech synthesis (`voicegen.ts`), prompt clips (`make-prompt-audio.ts`), simulated learners and their test audio (`simulated-learners.ts`, `make-test-audio.ts`), prompt and live CAPT checks |
-| `docs/`   | Demo script, measurements, sales one-pager                   |
+| `tools/`  | VoiceGen speech synthesis (`voicegen.ts`), prompt clips (`make-prompt-audio.ts`), the simulated learners' audio (`make-test-audio.ts`), the answer-key check (`check-answer-key.ts`), prompt and live CAPT checks |
+| `docs/`   | [Demo script](docs/demo-script.md), [demo run](docs/demo-run.md) with timings, [answer-key check](docs/answer-key-check.md) |
 
 ## Stack
 
-- **web/**: TypeScript with [Vite](https://vite.dev), no framework yet. Node.js 24 LTS.
+- **web/**: TypeScript with [Vite](https://vite.dev), no framework. Node.js 24 LTS.
 - **server/**: Go 1.27, standard library only. It serves the built web app and forwards `/api/capt/*` to CAPT, including WebSocket upgrades.
 
 ## Running it
@@ -72,6 +92,12 @@ It synthesizes speech with VoiceGen, checks REST, WebSocket, a planted error and
 ### Demo class
 
 Open `#/check` and press **Load demo class**: 30 children with three weeks of simulated practice and today's session open and empty, so the teacher view has real content. It includes the five simulated learners and their planted errors (Amara th, Chidi v, Wanjiru r, Kofi sh and ch; Zuri none), plus Tunde and Achieng improving and Musa slipping. **Remove demo class** deletes it. Loading it again gives an identical class.
+
+### Demo voices
+
+The quest doesn't allow recording children, so the five simulated learners speak with synthesized voices (VoiceGen, with their planted errors spelled out: "I tink dere are tree"). With **Demo voices** ticked on `#/check`, tapping the microphone for Amara, Chidi, Wanjiru, Kofi or Zuri *in the demo class* plays their clip aloud and sends it to the real CAPT, exactly as a recording would. Their turn screen shows a **Demo voice** badge. Every other child, and every real class, always uses the microphone.
+
+The clips ship in `web/public/demo-voices/`. To remake them (VoiceGen, 70 requests): `node tools/make-test-audio.ts --all`, then rescore with `node tools/check-answer-key.ts --rescore`.
 
 ### Turn timing
 
