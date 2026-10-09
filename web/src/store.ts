@@ -1,4 +1,4 @@
-// On-device storage for classes, learners, sessions and attempts (IndexedDB).
+// On-device storage for classes, learners, sessions, attempts and turns (IndexedDB).
 //
 // Everything stays on the tablet: no accounts, no server copy. Learners are
 // stored by first name and avatar only. Deleting a learner or a class also
@@ -32,10 +32,22 @@ export type Attempt = {
 
 export type NewAttempt = Omit<Attempt, 'id' | 'classId' | 'at'> & { at?: number }
 
-const ALL_STORES = ['classes', 'learners', 'sessions', 'attempts'] as const
+// One child's turn on the tablet, timed: from their turn screen opening to
+// them handing back. Only turns with at least one recording are kept.
+export type Turn = {
+  id: string
+  learnerId: string
+  classId: string
+  sessionId: string
+  startedAt: number
+  endedAt: number
+  attempts: number
+}
+
+const ALL_STORES = ['classes', 'learners', 'sessions', 'attempts', 'turns'] as const
 
 const DB_NAME = 'class-flow'
-const DB_VERSION = 1
+const DB_VERSION = 2 // 2 adds turns
 
 export class Store {
   private readonly db: IDBDatabase
@@ -47,15 +59,24 @@ export class Store {
   // `factory` is the browser's indexedDB by default; tests pass a fake.
   static async open(name = DB_NAME, factory: IDBFactory = globalThis.indexedDB): Promise<Store> {
     const req = factory.open(name, DB_VERSION)
-    req.onupgradeneeded = () => {
+    // Each version adds to the last, so existing data survives an upgrade.
+    req.onupgradeneeded = (e) => {
       const db = req.result
-      db.createObjectStore('classes', { keyPath: 'id' })
-      db.createObjectStore('learners', { keyPath: 'id' }).createIndex('classId', 'classId')
-      db.createObjectStore('sessions', { keyPath: 'id' }).createIndex('classId', 'classId')
-      const attempts = db.createObjectStore('attempts', { keyPath: 'id' })
-      attempts.createIndex('learnerId', 'learnerId')
-      attempts.createIndex('classId', 'classId')
-      attempts.createIndex('sessionId', 'sessionId')
+      if (e.oldVersion < 1) {
+        db.createObjectStore('classes', { keyPath: 'id' })
+        db.createObjectStore('learners', { keyPath: 'id' }).createIndex('classId', 'classId')
+        db.createObjectStore('sessions', { keyPath: 'id' }).createIndex('classId', 'classId')
+        const attempts = db.createObjectStore('attempts', { keyPath: 'id' })
+        attempts.createIndex('learnerId', 'learnerId')
+        attempts.createIndex('classId', 'classId')
+        attempts.createIndex('sessionId', 'sessionId')
+      }
+      if (e.oldVersion < 2) {
+        const turns = db.createObjectStore('turns', { keyPath: 'id' })
+        turns.createIndex('learnerId', 'learnerId')
+        turns.createIndex('classId', 'classId')
+        turns.createIndex('sessionId', 'sessionId')
+      }
     }
     return new Store(await done(req))
   }
@@ -78,9 +99,9 @@ export class Store {
 
   // Deletes the class with all its learners, sessions and attempts.
   async deleteClass(classId: string): Promise<void> {
-    await this.write(['classes', 'learners', 'sessions', 'attempts'], (tx) => {
+    await this.write(['classes', 'learners', 'sessions', 'attempts', 'turns'], (tx) => {
       tx.objectStore('classes').delete(classId)
-      for (const store of ['learners', 'sessions', 'attempts']) deleteWhere(tx.objectStore(store).index('classId'), classId)
+      for (const store of ['learners', 'sessions', 'attempts', 'turns']) deleteWhere(tx.objectStore(store).index('classId'), classId)
     })
   }
 
@@ -91,8 +112,9 @@ export class Store {
 
   // How much is stored, shown before a wipe.
   async counts(): Promise<{ classes: number; learners: number; sessions: number; attempts: number }> {
-    const tx = this.db.transaction(ALL_STORES)
-    const [classes, learners, sessions, attempts] = await Promise.all(ALL_STORES.map((n) => done(tx.objectStore(n).count())))
+    const names = ['classes', 'learners', 'sessions', 'attempts'] as const
+    const tx = this.db.transaction(names)
+    const [classes, learners, sessions, attempts] = await Promise.all(names.map((n) => done(tx.objectStore(n).count())))
     return { classes, learners, sessions, attempts }
   }
 
@@ -116,9 +138,10 @@ export class Store {
 
   // Deletes the learner and all their attempts.
   async deleteLearner(learnerId: string): Promise<void> {
-    await this.write(['learners', 'attempts'], (tx) => {
+    await this.write(['learners', 'attempts', 'turns'], (tx) => {
       tx.objectStore('learners').delete(learnerId)
       deleteWhere(tx.objectStore('attempts').index('learnerId'), learnerId)
+      deleteWhere(tx.objectStore('turns').index('learnerId'), learnerId)
     })
   }
 
@@ -176,6 +199,20 @@ export class Store {
 
   async attemptsForClass(classId: string): Promise<Attempt[]> {
     return byTime(await this.allWhere<Attempt>('attempts', 'classId', classId), (a) => a.at)
+  }
+
+  // Turns (TRA-812)
+
+  async addTurn(turn: Omit<Turn, 'id' | 'classId'>): Promise<Turn> {
+    const learner = await this.get<Learner>('learners', turn.learnerId)
+    if (!learner) throw new Error(`unknown learner ${turn.learnerId}`)
+    const t: Turn = { ...turn, id: newId(), classId: learner.classId }
+    await this.write(['turns'], (tx) => tx.objectStore('turns').add(t))
+    return t
+  }
+
+  async turnsForSession(sessionId: string): Promise<Turn[]> {
+    return byTime(await this.allWhere<Turn>('turns', 'sessionId', sessionId), (t) => t.startedAt)
   }
 
   // Helpers

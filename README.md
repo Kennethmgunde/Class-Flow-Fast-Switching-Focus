@@ -73,6 +73,10 @@ It synthesizes speech with VoiceGen, checks REST, WebSocket, a planted error and
 
 Open `#/check` and press **Load demo class**: 30 children with two weeks of simulated practice and today's session open and empty, so the teacher view has real content. It includes the five simulated learners and their planted errors (Amara th, Chidi v, Wanjiru r, Kofi sh and ch; Zuri none), plus Tunde and Achieng improving and Musa slipping. **Remove demo class** deletes it. Loading it again gives an identical class.
 
+### Turn timing
+
+Each turn is timed on the tablet, from the child's turn screen opening to them handing back (turns with no recording, like "Not me", aren't counted). The teacher view's **Waiting for a turn** panel shows, for the current or last session: "5 turns in 4 min 26 s · about 50 s per turn · 4.0 s to switch". A switch is the gap between one child handing back and the next starting; gaps over two minutes count as breaks.
+
 ### Microphone and HTTPS
 
 Browsers only allow the microphone on `https://` pages or `localhost`. Opening the app on a tablet at `http://<laptop-ip>:8080` blocks the mic. For the tablet demo, serve over HTTPS or use a tunnel.
