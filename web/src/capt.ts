@@ -5,7 +5,7 @@
 // /streaming-evaluate: on the demo, REST fails with a 503 once the server
 // takes more than 10 seconds, which happens for prompts over about 8 seconds.
 
-import { readWavInfo, toBase64 } from './audio/wav.ts'
+import { readWavInfo, toBase64, wavProblem } from './audio/wav.ts'
 
 export type AlignmentKind = 'match' | 'substitution' | 'deletion' | 'insertion'
 
@@ -23,6 +23,7 @@ export type CaptErrorKind =
   | 'timeout' // REST took over 10 s on the demo; retry over WebSocket
   | 'unavailable' // CAPT backend is down ("no healthy upstream")
   | 'no-result' // stream ended without a final result
+  | 'bad-audio' // empty, cut-off or malformed audio, refused before sending
   | 'server' // any other error from CAPT or the network
 
 export class CaptError extends Error {
@@ -57,6 +58,10 @@ export function cleanReferenceText(text: string): string {
 
 // Scores a 16 kHz mono WAV against the sentence the speaker was asked to say.
 export async function evaluate(wav: Uint8Array, referenceText: string, opts: EvaluateOptions = {}): Promise<Evaluation> {
+  // Never send CAPT an empty or malformed file (the demo server has had
+  // trouble with them); fail here instead, before any network call.
+  const problem = wavProblem(wav)
+  if (problem) throw new CaptError('bad-audio', `not sent to CAPT: ${problem}`)
   const config = {
     model_id: opts.modelId ?? 'en_US-16khz',
     audio_format: { audio_format_headered: 'AUDIO_FORMAT_HEADERED_WAV' },

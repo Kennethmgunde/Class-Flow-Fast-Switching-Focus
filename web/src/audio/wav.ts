@@ -71,3 +71,24 @@ export function measureWav(wav: Uint8Array): Loudness {
   }
   return { durationSec: info.durationSec, peak, rms: count ? Math.sqrt(sumSquares / count) : 0 }
 }
+
+// Why a WAV isn't fit to send to CAPT, or null if it is: a well-formed
+// 16 kHz mono 16-bit PCM file with real sound in it. Guards every CAPT call,
+// so no screen or tool can send an empty, cut-off or malformed file.
+export function wavProblem(wav: Uint8Array, minSeconds = 0.3): string | null {
+  if (wav.byteLength < 44) return `only ${wav.byteLength} bytes, smaller than a WAV header`
+  const view = new DataView(wav.buffer, wav.byteOffset, wav.byteLength)
+  const tag = (offset: number) => String.fromCharCode(...wav.subarray(offset, offset + 4))
+  if (tag(0) !== 'RIFF' || tag(8) !== 'WAVE' || tag(12) !== 'fmt ' || tag(36) !== 'data') return 'not a plain PCM WAV file'
+  if (view.getUint32(4, true) !== wav.byteLength - 8) return 'RIFF length doesn’t match the file size'
+  if (view.getUint16(20, true) !== 1) return 'not PCM audio'
+  const { sampleRate, channels, bitsPerSample, durationSec } = readWavInfo(wav)
+  if (sampleRate !== CAPT_SAMPLE_RATE || channels !== 1 || bitsPerSample !== 16) {
+    return `${sampleRate} Hz, ${channels} channel(s), ${bitsPerSample}-bit; CAPT needs 16000 Hz mono 16-bit`
+  }
+  if (view.getUint32(40, true) !== wav.byteLength - 44) return 'data length doesn’t match the file size'
+  if (durationSec === 0) return 'empty: no audio after the header'
+  if (durationSec < minSeconds) return `only ${durationSec.toFixed(2)} s of audio`
+  if (measureWav(wav).peak === 0) return 'all silence'
+  return null
+}
